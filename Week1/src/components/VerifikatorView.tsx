@@ -440,7 +440,7 @@ export const VerifikatorView: React.FC<VerifikatorViewProps> = ({
                                 : "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
                             }`}
                           >
-                            AI: {selectedSubmission.aiStatus} ({selectedSubmission.aiScore}%)
+                            AI: {selectedSubmission.aiStatus} ({Math.round(selectedSubmission.aiScore / 5)}/20)
                           </span>
                           <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
                             Verifikator: {verifierPassedRows} Lolos / {verifierRejectedRows} Ditolak

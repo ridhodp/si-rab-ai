@@ -260,7 +260,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ currentUser, submi
                         ) : (
                           <XCircle className="w-3.5 h-3.5" />
                         )}
-                        {sub.aiStatus === "LOLOS" ? "Lolos" : "Revisi"} ({sub.aiScore}%)
+                        {sub.aiStatus === "LOLOS" ? "Lolos" : "Revisi"} ({Math.round(sub.aiScore / 5)}/20)
                       </span>
                     </td>
                     <td className="px-5 py-4 text-center">

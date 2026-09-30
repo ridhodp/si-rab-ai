@@ -68,6 +68,24 @@ const MONTH_NAMES_ID = [
   { value: "12", label: "Desember" },
 ];
 
+const KATEGORI_OPTIONS = [
+  { value: "Kategori 1", label: "RO Wajib" },
+  { value: "Kategori 2", label: "RO Prioritas Strategis" },
+  { value: "Kategori 3", label: "RO Strategis/Diskresioner" },
+  { value: "Kategori 4", label: "RO Non-Strategis" },
+];
+
+const KATEGORI_DESCRIPTIONS: Record<string, string> = {
+  "Kategori 1":
+    "Kategori ini merupakan RO yang bersifat wajib, mengikat, ditetapkan melalui kebijakan penganggaran nasional, dan harus tetap berjalan secara berkelanjutan. Penilaian terhadap RO pada kategori ini tidak ditujukan untuk menilai perlu atau tidaknya RO, melainkan untuk memvalidasi kesesuaian ruang lingkup, kejelasan kebutuhan dasar, dan keterkaitan komponen dengan RO yang diusulkan.",
+  "Kategori 2":
+    "Kategori ini merupakan RO prioritas yang ditetapkan secara resmi oleh Menteri, dan/atau penguatan layanan esensial. Penilaian RO terhadap kategori ini dilaksanakan secara penuh sesuai parameter penilaian substansi.",
+  "Kategori 3":
+    "Kategori ini merupakan RO yang memiliki keterkaitan dengan prioritas pembangunan nasional dan pencapaian sasaran kementerian, serta mendukung tugas dan fungsi Satker, namun tidak memenuhi kriteria Kategori 1 maupun Kategori 2.",
+  "Kategori 4":
+    "Kategori ini merupakan RO yang tidak memenuhi kriteria Kategori 1, Kategori 2, maupun Kategori 3, serta tidak memiliki keterkaitan dengan tugas dan fungsi Satker pengusul, maupun pencapaian sasaran strategis kementerian. Terhadap RO yang masuk ke dalam kategori ini tidak diteruskan ke tahap berikutnya.",
+};
+
 export const SatkerView: React.FC<SatkerViewProps> = ({
   currentUser,
   onAddSubmission,
@@ -227,7 +245,6 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
 
   // Kategori RAB (Dropdown)
   const [selectedKategori, setSelectedKategori] = useState<string>("");
-  const [kategoriDeskripsi, setKategoriDeskripsi] = useState<string>("");
 
   // File Upload State: RAB PDF ONLY
   const [rabFile, setRabFile] = useState<File | null>(null);
@@ -563,7 +580,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
 
       // 3 New Category Fields
       kategori: selectedKategori,
-      kategori_deskripsi: kategoriDeskripsi.trim(),
+      kategori_deskripsi: selectedKategori ? KATEGORI_DESCRIPTIONS[selectedKategori] : "",
 
       // User Logging Metadata
       createdBy: userLabel,
@@ -1005,7 +1022,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                                     }`}
                                   >
                                     {sub.aiStatus === "LOLOS" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                                    {sub.aiScore}%
+                                    {Math.round(sub.aiScore / 5)}/20
                                   </span>
                                 </td>
 
@@ -1318,27 +1335,25 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                         <option value="" disabled>
                           -- Pilih Kategori --
                         </option>
-                        <option value="Kategori 1" className="dark:bg-slate-800 dark:text-white">Kategori 1</option>
-                        <option value="Kategori 2" className="dark:bg-slate-800 dark:text-white">Kategori 2</option>
-                        <option value="Kategori 3" className="dark:bg-slate-800 dark:text-white">Kategori 3</option>
-                        <option value="Kategori 4" className="dark:bg-slate-800 dark:text-white">Kategori 4</option>
+                        {KATEGORI_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value} className="dark:bg-slate-800 dark:text-white">
+                            {opt.label}
+                          </option>
+                        ))}
                       </select>
                       <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
 
                   <div className="mt-3">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    <span className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                       Deskripsi Kategori
-                    </label>
-                    <textarea
-                      id="input-kategori-deskripsi"
-                      value={kategoriDeskripsi}
-                      onChange={(e) => setKategoriDeskripsi(e.target.value)}
-                      placeholder="Tulis deskripsi kategori di sini..."
-                      rows={3}
-                      className="w-full px-3.5 py-2.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900 dark:text-white shadow-2xs resize-none"
-                    />
+                    </span>
+                    <div className="w-full px-3.5 py-2.5 text-xs bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 shadow-2xs min-h-[60px]">
+                      {selectedKategori
+                        ? KATEGORI_DESCRIPTIONS[selectedKategori]
+                        : "Pilih kategori untuk melihat deskripsi."}
+                    </div>
                   </div>
                 </div>
 
@@ -1547,7 +1562,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                     <span>Laporan Evaluasi Penapisan AI Dokumen RAB</span>
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    Kode: {currentSubmission.ticketNumber} &bull; Skor: {currentSubmission.aiScore}% ({currentSubmission.aiStatus})
+                    Kode: {currentSubmission.ticketNumber} &bull; Skor: {Math.round(currentSubmission.aiScore / 5)}/20 ({currentSubmission.aiStatus})
                   </p>
                 </div>
 
@@ -1670,7 +1685,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                       : "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
                   }`}
                 >
-                  AI: {selectedDetailSubmission.aiStatus} ({selectedDetailSubmission.aiScore}%)
+                  AI: {selectedDetailSubmission.aiStatus} ({Math.round(selectedDetailSubmission.aiScore / 5)}/20)
                 </span>
               </div>
 

@@ -141,7 +141,7 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({ isOpen, onClos
               <div className="flex items-center justify-between">
                 <span className="font-bold text-slate-800 uppercase tracking-wide">Status Kelayakan AI:</span>
                 <span className={`px-2.5 py-0.5 rounded font-bold text-xs ${submission.aiStatus === "LOLOS" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}`}>
-                  {submission.aiStatus} ({submission.aiScore}% Kepatuhan)
+                  {submission.aiStatus} ({Math.round(submission.aiScore / 5)}/20)
                 </span>
               </div>
               <div>
