@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm --prefix \"Progress Project\" run dev",
-    "build": "npm --prefix \"Progress Project\" run build",
-    "preview": "npm --prefix \"Progress Project\" run preview",
-    "install:all": "npm --prefix \"Progress Project\" install"
+    "dev": "cd progress-project && npm run dev",
+    "build": "cd progress-project && npm run build",
+    "preview": "cd progress-project && npm run preview",
+    "install:all": "cd progress-project && npm install"
   }
 }
