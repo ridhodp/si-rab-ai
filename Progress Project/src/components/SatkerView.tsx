@@ -1316,43 +1316,54 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
 
                 {/* SUB-SECTION B: KATEGORI USULAN RAB (DROPDOWN) */}
                 <div className="p-5 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 rounded-2xl space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">B. Klasifikasi Kategori Usulan RAB</span>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                      Kategori <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="select-kategori"
-                        value={selectedKategori}
-                        onChange={(e) => setSelectedKategori(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/60 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900 dark:text-white appearance-none pr-8 font-medium shadow-2xs"
-                      >
-                        <option value="" disabled>
-                          -- Pilih Kategori --
-                        </option>
-                        {KATEGORI_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value} className="dark:bg-slate-800 dark:text-white">
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">B. Klasifikasi Kategori Usulan RAB</span>
                     </div>
+                    <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-[11px] font-medium bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
+                      Deskripsi otomatis terisi sesuai kategori yang dipilih
+                    </span>
                   </div>
 
-                  <div className="mt-3">
-                    <span className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                      Deskripsi Kategori
-                    </span>
-                    <div className="w-full px-3.5 py-2.5 text-xs bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 shadow-2xs min-h-[60px]">
-                      {selectedKategori
-                        ? KATEGORI_DESCRIPTIONS[selectedKategori]
-                        : "Pilih kategori untuk melihat deskripsi."}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Kategori <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="select-kategori"
+                          value={selectedKategori}
+                          onChange={(e) => setSelectedKategori(e.target.value)}
+                          className="w-full px-3.5 py-2.5 text-xs bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/60 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 text-slate-900 dark:text-white appearance-none pr-8 font-medium shadow-2xs"
+                        >
+                          <option value="" disabled>
+                            -- Pilih Kategori --
+                          </option>
+                          {KATEGORI_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value} className="dark:bg-slate-800 dark:text-white">
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
+                        Pilih kategori untuk memuat deskripsi klasifikasi RO secara otomatis.
+                      </p>
+                    </div>
+
+                    <div>
+                      <span className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Deskripsi <span className="font-normal text-slate-400 dark:text-slate-500">(otomatis terisi)</span>
+                      </span>
+                      <textarea
+                        readOnly
+                        value={selectedKategori ? KATEGORI_DESCRIPTIONS[selectedKategori] : ""}
+                        placeholder="Pilih kategori untuk memuat deskripsi klasifikasi RO secara otomatis."
+                        className="w-full px-3.5 py-2.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 shadow-2xs min-h-[60px] resize-y focus:outline-none"
+                      />
                     </div>
                   </div>
                 </div>

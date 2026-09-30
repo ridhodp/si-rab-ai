@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm --prefix Week1 run dev",
-    "build": "npm --prefix Week1 run build",
-    "preview": "npm --prefix Week1 run preview",
-    "install:all": "npm --prefix Week1 install"
+    "dev": "npm --prefix \"Progress Project\" run dev",
+    "build": "npm --prefix \"Progress Project\" run build",
+    "preview": "npm --prefix \"Progress Project\" run preview",
+    "install:all": "npm --prefix \"Progress Project\" install"
   }
 }
