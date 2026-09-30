@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronsRight } from "lucide-react";
+import { ChevronsRight, ChevronsLeft } from "lucide-react";
 import { UserAccount, UserRole, SubmissionData, RegulationDocument, ActiveMenuKey, StandardMenuKey, ROLE_PERMISSIONS_MATRIX, HierarchyItem } from "./types";
 import { INITIAL_USERS, INITIAL_SUBMISSIONS } from "./data/initialUsers";
 import { INITIAL_REGULATIONS } from "./data/initialRegulations";
@@ -428,14 +428,14 @@ export default function App() {
       </div>
 
       {/* Floating button di mobile saat sidebar collapsed */}
-      {isSidebarCollapsed && !isMobileSidebarOpen && (
+      {isSidebarCollapsed && (
         <button
-          onClick={() => setIsMobileSidebarOpen(true)}
+          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
           className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer"
-          title="Buka Menu Navigasi"
-          aria-label="Buka Menu Navigasi"
+          title={isMobileSidebarOpen ? "Tutup Menu Navigasi" : "Buka Menu Navigasi"}
+          aria-label={isMobileSidebarOpen ? "Tutup Menu Navigasi" : "Buka Menu Navigasi"}
         >
-          <ChevronsRight className="w-5 h-5" />
+          {isMobileSidebarOpen ? <ChevronsLeft className="w-5 h-5" /> : <ChevronsRight className="w-5 h-5" />}
         </button>
       )}
 
