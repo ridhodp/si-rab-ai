@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ChevronsRight } from "lucide-react";
 import { UserAccount, UserRole, SubmissionData, RegulationDocument, ActiveMenuKey, StandardMenuKey, ROLE_PERMISSIONS_MATRIX, HierarchyItem } from "./types";
 import { INITIAL_USERS, INITIAL_SUBMISSIONS } from "./data/initialUsers";
 import { INITIAL_REGULATIONS } from "./data/initialRegulations";
@@ -425,6 +426,18 @@ export default function App() {
           }}
         />
       </div>
+
+      {/* Floating button di mobile saat sidebar collapsed */}
+      {isSidebarCollapsed && !isMobileSidebarOpen && (
+        <button
+          onClick={() => setIsMobileSidebarOpen(true)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer"
+          title="Buka Menu Navigasi"
+          aria-label="Buka Menu Navigasi"
+        >
+          <ChevronsRight className="w-5 h-5" />
+        </button>
+      )}
 
       {/* Main Content: Area Dinamis Menampilkan Isi Halaman Sesuai Matriks Hak Akses (E & V) */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
