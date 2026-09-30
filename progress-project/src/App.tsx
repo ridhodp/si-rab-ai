@@ -431,7 +431,7 @@ export default function App() {
       {isSidebarCollapsed && (
         <button
           onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer"
+          className="lg:hidden fixed top-4 left-4 z-[60] p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer pointer-events-auto"
           title={isMobileSidebarOpen ? "Tutup Menu Navigasi" : "Buka Menu Navigasi"}
           aria-label={isMobileSidebarOpen ? "Tutup Menu Navigasi" : "Buka Menu Navigasi"}
         >
