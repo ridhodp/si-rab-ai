@@ -392,6 +392,7 @@ export default function App() {
         fixed lg:relative inset-y-0 left-0 z-50 lg:z-30 transform transition-transform duration-300 ease-in-out h-full
         ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         ${!isMobileSidebarOpen ? 'invisible lg:visible' : 'visible'}
+        ${isSidebarCollapsed ? 'hidden lg:block' : 'block'}
       `}>
         <Sidebar
           activeRole={activeRole}
@@ -401,7 +402,13 @@ export default function App() {
             setIsMobileSidebarOpen(false);
           }}
           isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          onToggleCollapse={() => {
+            if (window.innerWidth < 1024) {
+              setIsMobileSidebarOpen(true);
+            } else {
+              setIsSidebarCollapsed(!isSidebarCollapsed);
+            }
+          }}
           currentUser={currentUser}
           onOpenChangePassword={() => {
             setIsPasswordModalOpen(true);
