@@ -1,0 +1,12 @@
+{
+  "name": "si-rab-ai",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix Week1 run dev",
+    "build": "npm --prefix Week1 run build",
+    "preview": "npm --prefix Week1 run preview",
+    "install:all": "npm --prefix Week1 install"
+  }
+}
