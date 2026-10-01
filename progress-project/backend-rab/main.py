@@ -58,6 +58,52 @@ def login(payload: dict, db: Session = Depends(get_db)):
         "phone": user.phone
     }
 
+
+@app.post("/api/auth/register")
+def register(payload: dict, db: Session = Depends(get_db)):
+    user_id = payload.get("id", "").strip()
+    password = payload.get("password", "")
+    name = payload.get("name", "").strip()
+    unit = payload.get("unit", "").strip()
+    role = payload.get("role", "satker")
+
+    if len(user_id) != 8:
+        raise HTTPException(status_code=400, detail="ID pengguna harus 8 karakter")
+
+    if not name or not unit:
+        raise HTTPException(status_code=400, detail="Nama dan unit wajib diisi")
+
+    if len(password) < 6:
+        raise HTTPException(status_code=400, detail="Password minimal 6 karakter")
+
+    existing = db.query(User).filter(User.id == user_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="ID pengguna sudah terdaftar")
+
+    user = User(
+        id=user_id,
+        name=name,
+        unit=unit,
+        roles=[role],
+        active_role=role,
+        password_hash=pwd_context.hash(password),
+        is_active=True,
+        phone=payload.get("phone")
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return {
+        "id": user.id,
+        "name": user.name,
+        "unit": user.unit,
+        "roles": user.roles,
+        "activeRole": user.active_role,
+        "isActive": user.is_active,
+        "message": "Pendaftaran berhasil"
+    }
+
+
 # ======================================================================
 # MANAJEMEN DOKUMEN PERATURAN & KETENTUAN ACUAN (SUPER ADMIN)
 # ======================================================================
