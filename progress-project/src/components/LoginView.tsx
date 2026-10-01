@@ -281,9 +281,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, theme = "light", on
         <RegisterModal
           theme={theme}
           onClose={() => setShowRegisterModal(false)}
-          onRegisterSuccess={(user) => {
+          onRegisterSuccess={() => {
             setShowRegisterModal(false);
-            onLoginSuccess(user);
+            setUserId("");
+            setPassword("");
+            setErrorMessage("");
           }}
         />
       )}
