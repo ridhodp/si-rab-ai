@@ -204,6 +204,7 @@ export default function App() {
         if (submissionsData.length > 0) setSubmissions(submissionsData);
         if (masterRoData.length > 0) setMasterRoList(masterRoData);
       } catch (error) {
+        // API tidak tersedia - fallback ke data lokal secara diam-diam
         console.warn("API tidak tersedia, menggunakan data lokal:", error);
       } finally {
         setIsLoading(false);
