@@ -87,18 +87,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, activeRole, activeM
 
         {/* Right: Theme Toggle & User Profile */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Help Button */}
-          {onOpenHelp && (
-            <button
-              onClick={onOpenHelp}
-              className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all shadow-sm cursor-pointer flex items-center justify-center hover:shadow"
-              title="Panduan Penggunaan"
-              aria-label="Panduan Penggunaan"
-            >
-              <HelpCircle className="w-4 h-4 text-slate-600 dark:text-slate-300" />
-            </button>
-          )}
-
           {/* Theme Toggle */}
           <button
             id="btn-toggle-theme"

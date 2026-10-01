@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronsRight, ChevronsLeft } from "lucide-react";
+import { ChevronsRight, ChevronsLeft, HelpCircle } from "lucide-react";
 import { UserAccount, UserRole, SubmissionData, RegulationDocument, ActiveMenuKey, StandardMenuKey, ROLE_PERMISSIONS_MATRIX, HierarchyItem } from "./types";
 import { INITIAL_USERS, INITIAL_SUBMISSIONS } from "./data/initialUsers";
 import { INITIAL_REGULATIONS } from "./data/initialRegulations";
@@ -567,6 +567,16 @@ export default function App() {
           Sistem Verifikasi &amp; Telaah Otomatis File RAB Berbasis AI &bull; Kementerian Komunikasi dan Digital Republik Indonesia &bull; 2026
         </footer>
         </div>
+
+      {/* Floating Help Button */}
+      <button
+        onClick={() => setIsHelpModalOpen(true)}
+        className="fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white shadow-lg shadow-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/40 transition-all cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95"
+        title="Panduan Penggunaan"
+        aria-label="Panduan Penggunaan"
+      >
+        <HelpCircle className="w-6 h-6" />
+      </button>
 
       {/* Modals */}
       <ChangePasswordModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} currentUser={currentUser} onUpdatePassword={handleUpdatePassword} />
