@@ -196,6 +196,39 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, theme = "light", on
             </div>
           </form>
 
+          {/* Quick Demo Access */}
+          <div className="mt-6 pt-5 border-t border-slate-200/80 dark:border-slate-800">
+            <span className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center mb-2.5">Akses Cepat Demo Akun:</span>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("19850115", "password123")}
+                className="p-2.5 bg-sky-50/60 dark:bg-slate-800 hover:bg-sky-100/70 dark:hover:bg-slate-700/80 border border-sky-200/70 dark:border-slate-700 rounded-xl text-center text-xs transition-colors cursor-pointer group shadow-2xs"
+              >
+                <div className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-700 dark:group-hover:text-cyan-400 text-[11px]">Super Admin</div>
+                <div className="font-mono text-[10px] text-slate-500 dark:text-slate-400">19850115</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("19890422", "password123")}
+                className="p-2.5 bg-sky-50/60 dark:bg-slate-800 hover:bg-sky-100/70 dark:hover:bg-slate-700/80 border border-sky-200/70 dark:border-slate-700 rounded-xl text-center text-xs transition-colors cursor-pointer group shadow-2xs"
+              >
+                <div className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-700 dark:group-hover:text-cyan-400 text-[11px]">Satker</div>
+                <div className="font-mono text-[10px] text-slate-500 dark:text-slate-400">19890422</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("19910718", "password123")}
+                className="p-2.5 bg-sky-50/60 dark:bg-slate-800 hover:bg-sky-100/70 dark:hover:bg-slate-700/80 border border-sky-200/70 dark:border-slate-700 rounded-xl text-center text-xs transition-colors cursor-pointer group shadow-2xs"
+              >
+                <div className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-700 dark:group-hover:text-cyan-400 text-[11px]">ROCAN (verif)</div>
+                <div className="font-mono text-[10px] text-slate-500 dark:text-slate-400">19910718</div>
+              </button>
+            </div>
+          </div>
+
           {/* Footer info */}
           <p className="text-center text-[11px] text-slate-400 dark:text-slate-500 mt-6">Kementerian Komunikasi dan Digital Republik Indonesia &bull; 2026</p>
         </div>
