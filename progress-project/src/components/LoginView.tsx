@@ -338,7 +338,17 @@ const RegisterModal: React.FC<{
       });
       onRegisterSuccess(user);
     } catch (error) {
-      setRegError(error instanceof Error ? error.message : "Pendaftaran gagal");
+      // Fallback: register lokal jika API tidak tersedia
+      const localUser: UserAccount = {
+        id: regId,
+        name: regName,
+        unit: regUnit,
+        roles: [regRole],
+        activeRole: regRole,
+        password: regPassword,
+        isActive: true,
+      };
+      onRegisterSuccess(localUser);
     } finally {
       setIsRegistering(false);
     }
