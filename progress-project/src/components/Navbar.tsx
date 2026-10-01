@@ -40,7 +40,7 @@ const getPageTitle = (menu: ActiveMenuKey): { title: string; subtitle: string } 
   }
 };
 
-export const Navbar: React.FC<NavbarProps> = ({ currentUser, activeRole, activeMenu, theme, onToggleTheme, onOpenChangePassword, onLogout, onOpenMobileSidebar }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentUser, activeRole, activeMenu, theme, onToggleTheme, onOpenChangePassword, onLogout, onOpenMobileSidebar, onOpenHelp }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
