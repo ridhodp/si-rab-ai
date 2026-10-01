@@ -56,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, activeRole, activeM
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md print:hidden transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md print:hidden transition-colors">
       <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Left: Page Title & Komdigi Badge */}
         <div className="flex items-center gap-3 min-w-0">
