@@ -13,6 +13,7 @@ import { SatkerView } from "./components/SatkerView";
 import { VerifikatorView } from "./components/VerifikatorView";
 import { MasterRoView } from "./components/MasterRoView";
 import { ChangePasswordModal } from "./components/ChangePasswordModal";
+import { HelpModal } from "./components/HelpModal";
 
 // Helper to map any ActiveMenuKey to StandardMenuKey
 export const toStandardMenuKey = (menuKey: ActiveMenuKey): StandardMenuKey => {
@@ -171,6 +172,9 @@ export default function App() {
   // Sidebar Collapsed State
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Help Modal State
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   // Theme State: 'light' or 'dark' (Persistent)
   const [theme, setTheme] = useState<"light" | "dark">(() => {
@@ -439,6 +443,7 @@ export default function App() {
           onOpenChangePassword={() => setIsPasswordModalOpen(true)}
           onLogout={handleLogout}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          onOpenHelp={() => setIsHelpModalOpen(true)}
         />
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
           {currentPermission === "NONE" ? (
@@ -565,6 +570,7 @@ export default function App() {
 
       {/* Modals */}
       <ChangePasswordModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} currentUser={currentUser} onUpdatePassword={handleUpdatePassword} />
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} activeRole={activeRole} activeMenu={activeMenu} />
     </div>
   );
 }
