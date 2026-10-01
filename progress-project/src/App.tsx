@@ -315,26 +315,11 @@ export default function App() {
   }, [currentUser]);
 
   // Handle Login
-  const handleLogin = async (id: string, password: string) => {
-    try {
-      const user = await authApi.login(id, password);
-      setCurrentUser(user);
-      const role = user.roles[0] || user.activeRole || "satker";
-      setActiveRole(role);
-      setActiveMenu(getDefaultMenuForRole(role));
-    } catch (error) {
-      console.error("Login gagal:", error);
-      // Fallback ke login lokal
-      const localUser = users.find((u) => u.id === id && u.password === password);
-      if (localUser) {
-        setCurrentUser(localUser);
-        const role = localUser.roles[0] || localUser.activeRole || "satker";
-        setActiveRole(role);
-        setActiveMenu(getDefaultMenuForRole(role));
-      } else {
-        throw error;
-      }
-    }
+  const handleLogin = (user: UserAccount) => {
+    setCurrentUser(user);
+    const role = user.roles[0] || user.activeRole || "satker";
+    setActiveRole(role);
+    setActiveMenu(getDefaultMenuForRole(role));
   };
 
   // Handle Logout
