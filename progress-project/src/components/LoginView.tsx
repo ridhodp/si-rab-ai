@@ -44,7 +44,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, theme = "light", on
 
     if (!foundUser.isActive) {
       setErrorMessage("Akun ini sedang dinonaktifkan oleh Administrator.");
-      return;
+      return;m
     }
 
     onLoginSuccess(foundUser);
@@ -199,7 +199,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, theme = "light", on
           {/* Quick Demo Access */}
           <div className="mt-6 pt-5 border-t border-slate-200/80 dark:border-slate-800">
             <span className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center mb-2.5">Akses Cepat Demo Akun:</span>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => handleQuickLogin("19850115", "password123")}

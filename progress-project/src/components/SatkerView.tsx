@@ -932,13 +932,13 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                       <thead className="bg-slate-100/95 dark:bg-slate-800/95 border-b-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 uppercase font-black tracking-wider text-xs">
                         <tr>
                           <th className="px-4 py-4 w-12 text-center">No</th>
-                          <th className="px-4 py-4 w-40">Kode &amp; Pengajuan</th>
-                          <th className="px-4 py-4">Dokumen PDF RAB &amp; Kategori</th>
-                          <th className="px-4 py-4">Hierarki Anggaran RKA-K/L</th>
-                          <th className="px-4 py-4 w-48">User Logging (Create &amp; Update)</th>
-                          <th className="px-4 py-4 w-28 text-center">Hasil AI</th>
-                          <th className="px-4 py-4 w-44">Status Verifikasi</th>
-                          <th className="px-4 py-4 w-44 text-center">Aksi (CRUD)</th>
+                          <th className="px-4 py-4 min-w-[150px]">Kode &amp; Pengajuan</th>
+                          <th className="px-4 py-4 min-w-[180px]">Dokumen PDF RAB &amp; Kategori</th>
+                          <th className="px-4 py-4 min-w-[170px] hidden xl:table-cell">Hierarki Anggaran RKA-K/L</th>
+                          <th className="px-4 py-4 w-40 hidden lg:table-cell">User Logging (Create &amp; Update)</th>
+                          <th className="px-4 py-4 w-20 text-center">Hasil AI</th>
+                          <th className="px-4 py-4 min-w-[130px]">Status Verifikasi</th>
+                          <th className="px-4 py-4 w-24 text-center">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1001,7 +1001,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                                 </td>
 
                                 {/* 4. Hierarki Anggaran */}
-                                <td className="px-4 py-4">
+                                <td className="px-4 py-4 hidden xl:table-cell">
                                   <span className="font-semibold text-slate-900 dark:text-slate-200 block truncate max-w-xs" title={sub.kegiatan}>
                                     {sub.kegiatan}
                                   </span>
@@ -1011,7 +1011,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                                 </td>
 
                                 {/* 5. User Logging (Create & Update info) */}
-                                <td className="px-4 py-4">
+                                <td className="px-4 py-4 hidden lg:table-cell">
                                   <div className="space-y-1">
                                     <div className="text-[11px] text-slate-600 dark:text-slate-400">
                                       <span className="font-semibold text-slate-800 dark:text-slate-200">Created: </span>
@@ -1074,7 +1074,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
 
                                 {/* 8. Aksi (CRUD) */}
                                 <td className="px-4 py-4 text-center">
-                                  <div className="flex items-center justify-center gap-1.5">
+                                  <div className="flex items-center justify-center gap-1.5 flex-wrap">
                                     {/* Read: Detail */}
                                     <button
                                       type="button"

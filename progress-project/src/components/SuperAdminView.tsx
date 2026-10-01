@@ -1310,7 +1310,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
                   Tentukan kewenangan akun pada menu: hanya bisa melihat (*view*), mengubah data (*edit*), atau keduanya (*both*).
                 </p>
 
-                <div className="grid grid-cols-3 gap-2 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
                   <button
                     type="button"
                     onClick={() => setFormMenuAccess("view")}
@@ -1362,7 +1362,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
                   <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-semibold">1 Role per Akun</span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {(["superadmin", "satker", "verifikator"] as UserRole[]).map((r) => {
                     const isChecked = formRoles.includes(r);
                     return (

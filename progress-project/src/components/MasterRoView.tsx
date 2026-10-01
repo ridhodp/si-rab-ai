@@ -327,12 +327,12 @@ export const MasterRoView: React.FC<MasterRoViewProps> = ({ permission, currentU
                 <thead className="bg-slate-50 dark:bg-slate-800/80 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="px-4 py-3.5 w-12 text-center">No</th>
-                    <th className="px-4 py-3.5 min-w-[220px]">Program &bull; Eselon I</th>
-                    <th className="px-4 py-3.5 min-w-[220px]">Kegiatan &bull; Eselon II</th>
-                    <th className="px-4 py-3.5 min-w-[200px]">Klasifikasi KRO</th>
-                    <th className="px-4 py-3.5 min-w-[220px]">Rincian Output (RO)</th>
-                    <th className="px-4 py-3.5 w-32 text-center">Prioritas</th>
-                    {isEditable && <th className="px-4 py-3.5 w-24 text-center">Aksi</th>}
+                    <th className="px-4 py-3.5 min-w-[160px]">Program &bull; Eselon I</th>
+                    <th className="px-4 py-3.5 min-w-[160px] hidden md:table-cell">Kegiatan &bull; Eselon II</th>
+                    <th className="px-4 py-3.5 min-w-[140px] hidden lg:table-cell">Klasifikasi KRO</th>
+                    <th className="px-4 py-3.5 min-w-[160px]">Rincian Output (RO)</th>
+                    <th className="px-4 py-3.5 w-24 text-center hidden sm:table-cell">Prioritas</th>
+                    {isEditable && <th className="px-4 py-3.5 w-20 text-center">Aksi</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
@@ -354,17 +354,17 @@ export const MasterRoView: React.FC<MasterRoViewProps> = ({ permission, currentU
                             <span>{item.unitEselon1}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 hidden md:table-cell">
                           <div className="font-medium text-slate-700 dark:text-slate-300 leading-snug">{item.kegiatan}</div>
                           <div className="text-[10px] text-slate-400 mt-0.5">Unit: {item.unitEselon2}</div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 hidden lg:table-cell">
                           <span className="font-semibold text-cyan-700 dark:text-cyan-400 block leading-snug">{item.kro}</span>
                         </td>
                         <td className="px-4 py-3">
                           <span className="font-bold text-slate-900 dark:text-white block leading-snug">{item.ro}</span>
                         </td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3 text-center hidden sm:table-cell">
                           <span
                             className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${
                               item.prioritasCheck.toLowerCase().includes("prioritas nasional") && !item.prioritasCheck.toLowerCase().includes("bukan")

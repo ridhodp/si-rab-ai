@@ -467,14 +467,14 @@ export const VerifikatorView: React.FC<VerifikatorViewProps> = ({
                             <thead className="bg-slate-100/95 dark:bg-slate-800/95 text-slate-800 dark:text-slate-200 uppercase font-black text-xs sticky top-0 z-10 border-b-2 border-slate-300 dark:border-slate-700">
                               <tr>
                                 <th className="px-4 py-3.5 w-12 text-center">No</th>
-                                <th className="px-4 py-3.5 min-w-[200px]">Kriteria Wajib RAB</th>
-                                <th className="px-4 py-3.5 w-28 text-center">Status AI</th>
-                                <th className="px-4 py-3.5 min-w-[180px]">Catatan Bukti AI</th>
+                                <th className="px-4 py-3.5 min-w-[180px]">Kriteria Wajib RAB</th>
+                                <th className="px-4 py-3.5 w-20 text-center">Status AI</th>
+                                <th className="px-4 py-3.5 min-w-[180px] hidden lg:table-cell">Catatan Bukti AI</th>
                                 <th className="px-4 py-3.5 min-w-[150px] text-center bg-cyan-100/60 dark:bg-cyan-950/60 border-l border-r border-cyan-200 dark:border-cyan-800">
                                   Kolom Verifikator
                                   <span className="block text-[10px] font-semibold text-cyan-700 dark:text-cyan-400 lowercase">(bisa diubah)</span>
                                 </th>
-                                <th className="px-4 py-3.5 min-w-[190px] bg-slate-100/80 dark:bg-slate-800/80">Catatan Evaluasi Verifikator</th>
+                                <th className="px-4 py-3.5 min-w-[190px] hidden lg:table-cell bg-slate-100/80 dark:bg-slate-800/80">Catatan Evaluasi Verifikator</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
@@ -515,7 +515,7 @@ export const VerifikatorView: React.FC<VerifikatorViewProps> = ({
                                       )}
                                     </td>
 
-                                    <td className="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-xs leading-relaxed">{c.notes}</td>
+                                    <td className="px-4 py-3.5 text-slate-600 dark:text-slate-400 text-xs leading-relaxed hidden lg:table-cell">{c.notes}</td>
 
                                     <td className="px-4 py-3.5 text-center bg-cyan-50/20 dark:bg-cyan-950/20 border-l border-r border-cyan-100 dark:border-cyan-900/60">
                                       {isEditable ? (
@@ -558,7 +558,7 @@ export const VerifikatorView: React.FC<VerifikatorViewProps> = ({
                                       {isOverridden && <div className="text-[10px] text-amber-700 dark:text-amber-400 font-bold mt-1">*Diubah dari AI</div>}
                                     </td>
 
-                                    <td className="px-4 py-3.5 bg-slate-50/40 dark:bg-slate-800/30">
+                                    <td className="px-4 py-3.5 bg-slate-50/40 dark:bg-slate-800/30 hidden lg:table-cell">
                                       {isEditable ? (
                                         <input
                                           type="text"
@@ -825,10 +825,10 @@ export const VerifikatorView: React.FC<VerifikatorViewProps> = ({
                     <thead className="bg-slate-100/95 dark:bg-slate-800/95 border-b-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 uppercase font-black tracking-wider text-xs">
                       <tr>
                         <th className="px-4 py-4 w-14 text-center">No</th>
-                        <th className="px-5 py-4 min-w-[260px]">Kriteria</th>
-                        <th className="px-5 py-4 min-w-[320px]">Deskripsi</th>
-                        <th className="px-4 py-4 w-36 text-center">Aktif dan Tidak Aktif</th>
-                        <th className="px-4 py-4 w-36 text-center">Aksi (CRUD)</th>
+                        <th className="px-5 py-4 min-w-[180px]">Kriteria</th>
+                        <th className="px-5 py-4 min-w-[240px] hidden md:table-cell">Deskripsi</th>
+                        <th className="px-4 py-4 w-24 text-center">Status</th>
+                        <th className="px-4 py-4 w-24 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -850,7 +850,7 @@ export const VerifikatorView: React.FC<VerifikatorViewProps> = ({
                             </td>
 
                             {/* Deskripsi */}
-                            <td className="px-5 py-4">
+                            <td className="px-5 py-4 hidden md:table-cell">
                               <span className="text-slate-600 dark:text-slate-300 block leading-relaxed">{item.description}</span>
                             </td>
 
