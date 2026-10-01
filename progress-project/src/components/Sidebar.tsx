@@ -217,7 +217,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeRole, activeMenu, onSele
         <div className="px-5 pt-5 pb-2">
           {!isCollapsed ? (
             <div className="flex items-center">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Navigasi</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Menu Navigasi</span>
             </div>
           ) : (
             <div className="h-px bg-slate-200 dark:bg-slate-700"></div>
