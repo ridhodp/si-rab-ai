@@ -216,9 +216,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeRole, activeMenu, onSele
         {/* Section Title */}
         <div className="px-5 pt-5 pb-2">
           {!isCollapsed ? (
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Menu Utama</span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">v2.6</span>
+            <div className="flex items-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Navigasi</span>
             </div>
           ) : (
             <div className="h-px bg-slate-200 dark:bg-slate-700"></div>

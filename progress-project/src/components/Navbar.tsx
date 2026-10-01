@@ -76,10 +76,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, activeRole, activeM
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight truncate">{pageInfo.title}</h1>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-sky-50 dark:bg-sky-950/40 border border-sky-200/60 dark:border-sky-800/40 text-sky-700 dark:text-sky-300 text-[10px] font-bold shrink-0">
-                <ShieldCheck className="w-3 h-3" />
-                Komdigi RI
-              </span>
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate hidden sm:block">{pageInfo.subtitle}</p>
           </div>
