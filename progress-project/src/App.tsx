@@ -405,7 +405,7 @@ export default function App() {
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => {
             if (window.innerWidth < 1024) {
-              setIsMobileSidebarOpen(!isMobileSidebarOpen);
+              setIsMobileSidebarOpen(true);
             } else {
               setIsSidebarCollapsed(!isSidebarCollapsed);
             }
