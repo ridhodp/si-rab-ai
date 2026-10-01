@@ -872,19 +872,25 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">4. Tanggal Pengajuan (Mulai - Akhir)</label>
                       <div className="flex items-center gap-2">
-                        <input
-                          type="date"
-                          value={filterTanggalMulai}
-                          onChange={(e) => setFilterTanggalMulai(e.target.value)}
-                          className="flex-1 h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
-                        />
-                        <span className="text-xs text-slate-400 font-medium">s/d</span>
-                        <input
-                          type="date"
-                          value={filterTanggalAkhir}
-                          onChange={(e) => setFilterTanggalAkhir(e.target.value)}
-                          className="flex-1 h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
-                        />
+                        <div className="relative flex-1">
+                          <input
+                            type="date"
+                            value={filterTanggalMulai}
+                            onChange={(e) => setFilterTanggalMulai(e.target.value)}
+                            className="w-full h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1 px-1">
+                          <div className="w-4 h-px bg-slate-300 dark:bg-slate-600"></div>
+                        </div>
+                        <div className="relative flex-1">
+                          <input
+                            type="date"
+                            value={filterTanggalAkhir}
+                            onChange={(e) => setFilterTanggalAkhir(e.target.value)}
+                            className="w-full h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
