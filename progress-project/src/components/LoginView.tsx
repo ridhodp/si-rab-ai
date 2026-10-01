@@ -183,6 +183,17 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, theme = "light", on
               <ArrowRight className="w-4 h-4" />
             </button>
 
+            {/* Register Link */}
+            <div className="text-center mt-3">
+              <button
+                type="button"
+                onClick={() => setShowRegisterModal(true)}
+                className="text-xs text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                Belum punya akun? Daftar di sini
+              </button>
+            </div>
           </form>
 
           {/* Quick Demo Access */}
