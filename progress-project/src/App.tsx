@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronsRight, ChevronsLeft, HelpCircle } from "lucide-react";
+import { ChevronsRight, ChevronsLeft, HelpCircle, CheckCircle2, LogOut, AlertCircle, X } from "lucide-react";
 import { UserAccount, UserRole, SubmissionData, RegulationDocument, ActiveMenuKey, StandardMenuKey, ROLE_PERMISSIONS_MATRIX, HierarchyItem } from "./types";
 import { INITIAL_USERS, INITIAL_SUBMISSIONS } from "./data/initialUsers";
 import { INITIAL_REGULATIONS } from "./data/initialRegulations";
@@ -187,6 +187,14 @@ export default function App() {
   // Loading State
   const [isLoading, setIsLoading] = useState(true);
 
+  // Toast State
+  const [toast, setToast] = useState<{ title: string; message: string; type: "success" | "info" | "error" } | null>(null);
+
+  const showToast = (title: string, message: string, type: "success" | "info" | "error") => {
+    setToast({ title, message, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
   // Fetch data dari API
   useEffect(() => {
     const fetchData = async () => {
@@ -321,12 +329,15 @@ export default function App() {
     const role = user.roles[0] || user.activeRole || "satker";
     setActiveRole(role);
     setActiveMenu(getDefaultMenuForRole(role));
+    showToast("Berhasil Masuk", `Selamat datang, ${user.name}`, "success");
   };
 
   // Handle Logout
   const handleLogout = () => {
+    const userName = currentUser?.name;
     setCurrentUser(null);
     localStorage.removeItem("rab_app_current_user");
+    showToast("Berhasil Keluar", userName ? `Sampai jumpa, ${userName}` : "Anda telah keluar dari sistem", "info");
   };
 
   // User CRUD by Super Admin
@@ -451,6 +462,44 @@ export default function App() {
     setSubmissions(submissions.filter((s) => s.id !== submissionId));
   };
 
+  // Toast Notification Element (rendered di semua kondisi)
+  const toastElement = toast ? (
+    <div className="fixed top-20 right-4 z-[80] animate-in slide-in-from-right duration-300">
+      <div
+        className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-sm ${
+          toast.type === "success"
+            ? "bg-emerald-50/95 dark:bg-emerald-950/90 border-emerald-200 dark:border-emerald-800"
+            : toast.type === "info"
+            ? "bg-sky-50/95 dark:bg-sky-950/90 border-sky-200 dark:border-sky-800"
+            : "bg-rose-50/95 dark:bg-rose-950/90 border-rose-200 dark:border-rose-800"
+        }`}
+      >
+        <div
+          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+            toast.type === "success"
+              ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+              : toast.type === "info"
+              ? "bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400"
+              : "bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400"
+          }`}
+        >
+          {toast.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : toast.type === "info" ? <LogOut className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+        </div>
+        <div className="min-w-0">
+          <div className="text-xs font-bold text-slate-900 dark:text-white">{toast.title}</div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{toast.message}</div>
+        </div>
+        <button
+          onClick={() => setToast(null)}
+          className="ml-2 p-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700/60 text-slate-400 hover:text-slate-600 cursor-pointer shrink-0"
+          aria-label="Tutup notifikasi"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  ) : null;
+
   // Loading Screen
   if (isLoading) {
     return (
@@ -470,6 +519,7 @@ export default function App() {
     return (
       <>
         <LoginView users={users} theme={theme} onToggleTheme={handleToggleTheme} onLoginSuccess={handleLogin} />
+        {toastElement}
       </>
     );
   }
@@ -663,6 +713,9 @@ export default function App() {
           Sistem Verifikasi &amp; Telaah Otomatis File RAB Berbasis AI &bull; Kementerian Komunikasi dan Digital Republik Indonesia &bull; 2026
         </footer>
         </div>
+
+      {/* Toast Notification */}
+      {toastElement}
 
       {/* Floating Help Button */}
       <button
