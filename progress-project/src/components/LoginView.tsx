@@ -448,7 +448,7 @@ const RegisterModal: React.FC<{
           <button
             type="submit"
             disabled={isRegistering}
-            className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-400 text-white text-xs font-bold rounded-xl shadow-sm shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+            className="w-full py-2.5 px-4 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-400 text-white text-xs font-bold rounded-xl shadow-sm shadow-cyan-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
             {isRegistering ? "Mendaftar..." : "Daftar Sekarang"}
           </button>
