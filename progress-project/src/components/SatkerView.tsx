@@ -117,14 +117,16 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
   const [filterJenisDokumen, setFilterJenisDokumen] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "Menunggu" | "Diterima" | "Ditolak">("all");
   const [filterTahun, setFilterTahun] = useState<string>("all");
-  const [filterBulan, setFilterBulan] = useState<string>("all");
+  const [filterTanggalMulai, setFilterTanggalMulai] = useState<string>("");
+  const [filterTanggalAkhir, setFilterTanggalAkhir] = useState<string>("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   const [appliedFilters, setAppliedFilters] = useState({
     jenisDokumen: "",
     status: "all" as "all" | "Menunggu" | "Diterima" | "Ditolak",
     tahun: "all",
-    bulan: "all",
+    tanggalMulai: "",
+    tanggalAkhir: "",
   });
 
   const handleApplyFilter = () => {
@@ -132,7 +134,8 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
       jenisDokumen: filterJenisDokumen,
       status: filterStatus,
       tahun: filterTahun,
-      bulan: filterBulan,
+      tanggalMulai: filterTanggalMulai,
+      tanggalAkhir: filterTanggalAkhir,
     });
   };
 
@@ -140,12 +143,14 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
     setFilterJenisDokumen("");
     setFilterStatus("all");
     setFilterTahun("all");
-    setFilterBulan("all");
+    setFilterTanggalMulai("");
+    setFilterTanggalAkhir("");
     setAppliedFilters({
       jenisDokumen: "",
       status: "all",
       tahun: "all",
-      bulan: "all",
+      tanggalMulai: "",
+      tanggalAkhir: "",
     });
   };
 
@@ -437,14 +442,19 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
       }
     }
 
-    // 4. Bulan (Dropdown)
-    if (appliedFilters.bulan !== "all") {
-      const monthObj = MONTH_NAMES_ID.find((m) => m.value === appliedFilters.bulan);
-      const monthPatternNum = `/${appliedFilters.bulan}/`;
-      const monthPatternName = monthObj ? monthObj.label.toLowerCase() : "";
-      const matchMonth = sub.submittedAt.includes(monthPatternNum) || (monthPatternName && sub.submittedAt.toLowerCase().includes(monthPatternName));
-      if (!matchMonth) {
-        return false;
+    // 4. Tanggal Pengajuan (Date Range)
+    if (appliedFilters.tanggalMulai || appliedFilters.tanggalAkhir) {
+      const subDate = sub.submittedAt ? new Date(sub.submittedAt) : null;
+      if (subDate && !isNaN(subDate.getTime())) {
+        if (appliedFilters.tanggalMulai) {
+          const startDate = new Date(appliedFilters.tanggalMulai);
+          if (subDate < startDate) return false;
+        }
+        if (appliedFilters.tanggalAkhir) {
+          const endDate = new Date(appliedFilters.tanggalAkhir);
+          endDate.setHours(23, 59, 59, 999);
+          if (subDate > endDate) return false;
+        }
       }
     }
 
@@ -858,16 +868,24 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                       />
                     </div>
 
-                    {/* 4. Bulan Pengajuan (Calendar Picker) */}
+                    {/* 4. Tanggal Pengajuan (Date Range) */}
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">4. Bulan Pengajuan</label>
-                      <input
-                        type="month"
-                        id="filter-bulan-dropdown"
-                        value={filterBulan === "all" ? "" : `2026-${filterBulan}`}
-                        onChange={(e) => setFilterBulan(e.target.value ? e.target.value.split("-")[1] : "all")}
-                        className="w-full h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
-                      />
+                      <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">4. Tanggal Pengajuan (Mulai - Akhir)</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="date"
+                          value={filterTanggalMulai}
+                          onChange={(e) => setFilterTanggalMulai(e.target.value)}
+                          className="flex-1 h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
+                        />
+                        <span className="text-xs text-slate-400 font-medium">s/d</span>
+                        <input
+                          type="date"
+                          value={filterTanggalAkhir}
+                          onChange={(e) => setFilterTanggalAkhir(e.target.value)}
+                          className="flex-1 h-10 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium shadow-2xs cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
 
