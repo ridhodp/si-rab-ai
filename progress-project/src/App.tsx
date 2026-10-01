@@ -14,6 +14,7 @@ import { VerifikatorView } from "./components/VerifikatorView";
 import { MasterRoView } from "./components/MasterRoView";
 import { ChangePasswordModal } from "./components/ChangePasswordModal";
 import { HelpModal } from "./components/HelpModal";
+import { authApi, usersApi, regulationsApi, submissionsApi, masterRoApi, criteriaApi } from "./services/api";
 
 // Helper to map any ActiveMenuKey to StandardMenuKey
 export const toStandardMenuKey = (menuKey: ActiveMenuKey): StandardMenuKey => {
@@ -183,6 +184,35 @@ export default function App() {
     return "light";
   });
 
+  // Loading State
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch data dari API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [usersData, regulationsData, submissionsData, masterRoData, criteriaData] = await Promise.all([
+          usersApi.getAll(),
+          regulationsApi.getAll(),
+          submissionsApi.getAll(),
+          masterRoApi.getAll(),
+          criteriaApi.getAll(),
+        ]);
+
+        if (usersData.length > 0) setUsers(usersData);
+        if (regulationsData.length > 0) setRegulations(regulationsData);
+        if (submissionsData.length > 0) setSubmissions(submissionsData);
+        if (masterRoData.length > 0) setMasterRoList(masterRoData);
+      } catch (error) {
+        console.warn("API tidak tersedia, menggunakan data lokal:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   // Sync theme to <html> tag classList and localStorage
   useEffect(() => {
     localStorage.setItem("rab_app_theme", theme);
@@ -285,11 +315,26 @@ export default function App() {
   }, [currentUser]);
 
   // Handle Login
-  const handleLogin = (user: UserAccount) => {
-    setCurrentUser(user);
-    const role = user.roles[0] || user.activeRole || "satker";
-    setActiveRole(role);
-    setActiveMenu(getDefaultMenuForRole(role));
+  const handleLogin = async (id: string, password: string) => {
+    try {
+      const user = await authApi.login(id, password);
+      setCurrentUser(user);
+      const role = user.roles[0] || user.activeRole || "satker";
+      setActiveRole(role);
+      setActiveMenu(getDefaultMenuForRole(role));
+    } catch (error) {
+      console.error("Login gagal:", error);
+      // Fallback ke login lokal
+      const localUser = users.find((u) => u.id === id && u.password === password);
+      if (localUser) {
+        setCurrentUser(localUser);
+        const role = localUser.roles[0] || localUser.activeRole || "satker";
+        setActiveRole(role);
+        setActiveMenu(getDefaultMenuForRole(role));
+      } else {
+        throw error;
+      }
+    }
   };
 
   // Handle Logout
@@ -299,11 +344,22 @@ export default function App() {
   };
 
   // User CRUD by Super Admin
-  const handleAddUser = (newUser: UserAccount) => {
-    setUsers([newUser, ...users]);
+  const handleAddUser = async (newUser: UserAccount) => {
+    try {
+      await usersApi.create(newUser);
+      setUsers([newUser, ...users]);
+    } catch (error) {
+      console.error("Gagal menambah user:", error);
+      setUsers([newUser, ...users]);
+    }
   };
 
-  const handleUpdateUser = (updatedUser: UserAccount) => {
+  const handleUpdateUser = async (updatedUser: UserAccount) => {
+    try {
+      await usersApi.update(updatedUser.id, updatedUser);
+    } catch (error) {
+      console.error("Gagal update user:", error);
+    }
     setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
     if (currentUser && currentUser.id === updatedUser.id) {
       setCurrentUser(updatedUser);
@@ -312,37 +368,77 @@ export default function App() {
     }
   };
 
-  const handleDeleteUser = (userId: string) => {
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await usersApi.delete(userId);
+    } catch (error) {
+      console.error("Gagal hapus user:", error);
+    }
     setUsers(users.filter((u) => u.id !== userId));
   };
 
   // Regulation Documents CRUD
-  const handleAddRegulation = (newReg: RegulationDocument) => {
+  const handleAddRegulation = async (newReg: RegulationDocument) => {
+    try {
+      await regulationsApi.create(newReg);
+    } catch (error) {
+      console.error("Gagal menambah regulasi:", error);
+    }
     setRegulations([newReg, ...regulations]);
   };
 
-  const handleUpdateRegulation = (updatedReg: RegulationDocument) => {
+  const handleUpdateRegulation = async (updatedReg: RegulationDocument) => {
+    try {
+      await regulationsApi.update(updatedReg.id, updatedReg);
+    } catch (error) {
+      console.error("Gagal update regulasi:", error);
+    }
     setRegulations(regulations.map((r) => (r.id === updatedReg.id ? updatedReg : r)));
   };
 
-  const handleDeleteRegulation = (regId: string) => {
+  const handleDeleteRegulation = async (regId: string) => {
+    try {
+      await regulationsApi.delete(regId);
+    } catch (error) {
+      console.error("Gagal hapus regulasi:", error);
+    }
     setRegulations(regulations.filter((r) => r.id !== regId));
   };
 
-  const handleToggleRegulationActive = (regId: string) => {
+  const handleToggleRegulationActive = async (regId: string) => {
+    try {
+      await regulationsApi.toggle(regId);
+    } catch (error) {
+      console.error("Gagal toggle regulasi:", error);
+    }
     setRegulations(regulations.map((r) => (r.id === regId ? { ...r, isActive: !r.isActive } : r)));
   };
 
   // Master RO CRUD
-  const handleAddMasterRo = (newItem: HierarchyItem) => {
+  const handleAddMasterRo = async (newItem: HierarchyItem) => {
+    try {
+      await masterRoApi.create(newItem);
+    } catch (error) {
+      console.error("Gagal menambah Master RO:", error);
+    }
     setMasterRoList([newItem, ...masterRoList]);
   };
 
-  const handleUpdateMasterRo = (updatedItem: HierarchyItem) => {
+  const handleUpdateMasterRo = async (updatedItem: HierarchyItem) => {
+    try {
+      await masterRoApi.update(updatedItem.id, updatedItem);
+    } catch (error) {
+      console.error("Gagal update Master RO:", error);
+    }
     setMasterRoList(masterRoList.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
   };
 
-  const handleDeleteMasterRo = (itemId: string) => {
+  const handleDeleteMasterRo = async (itemId: string) => {
+    try {
+      await masterRoApi.delete(itemId);
+    } catch (error) {
+      console.error("Gagal hapus Master RO:", error);
+    }
     setMasterRoList(masterRoList.filter((item) => item.id !== itemId));
   };
 
@@ -368,6 +464,20 @@ export default function App() {
   const handleDeleteSubmission = (submissionId: string) => {
     setSubmissions(submissions.filter((s) => s.id !== submissionId));
   };
+
+  // Loading Screen
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-sky-100/75 dark:bg-slate-950 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mx-auto animate-pulse">
+            <HelpCircle className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Memuat data...</p>
+        </div>
+      </div>
+    );
+  }
 
   // If not logged in, render Login View
   if (!currentUser) {

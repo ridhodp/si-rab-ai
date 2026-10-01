@@ -63,3 +63,28 @@ class Submission(Base):
     verified_at = Column(DateTime(timezone=True), nullable=True)
     digital_signature_hash = Column(String(100), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class MasterRo(Base):
+    __tablename__ = "master_ro"
+
+    id = Column(String(50), primary_key=True, index=True)
+    program = Column(String(200), nullable=False)
+    unit_eselon1 = Column(String(150), nullable=False)
+    kegiatan = Column(String(200), nullable=False)
+    unit_eselon2 = Column(String(150), nullable=False)
+    prioritas_check = Column(String(50), nullable=True)
+    kro = Column(String(150), nullable=False)
+    ro = Column(String(150), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Criterion(Base):
+    __tablename__ = "criteria"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    text = Column(String(500), nullable=False)
+    description = Column(Text, nullable=True)
+    category = Column(String(100), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

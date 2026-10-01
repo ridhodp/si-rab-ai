@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 from database import engine, get_db, Base
-from models import User, Submission, Regulation
+from models import User, Submission, Regulation, MasterRo, Criterion
 from services.gemini_checker import analyze_rab_document, extract_pdf_text
 
 # Buat tabel otomatis jika belum ada di PostgreSQL
@@ -236,3 +236,244 @@ def verify_submission(sub_id: str, payload: dict, db: Session = Depends(get_db))
     submission.digital_signature_hash = f"DIGISIG-KOMDIGI-{uuid.uuid4().hex[:8].upper()}"
     db.commit()
     return {"status": "success", "message": "Keputusan verifikasi berhasil disimpan"}
+
+
+# ======================================================================
+# MANAJEMEN PENGGUNA (SUPER ADMIN)
+# ======================================================================
+@app.get("/api/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    return [
+        {
+            "id": u.id,
+            "name": u.name,
+            "unit": u.unit,
+            "roles": u.roles,
+            "activeRole": u.active_role,
+            "isActive": u.is_active,
+            "phone": u.phone,
+            "createdAt": u.created_at.strftime("%Y-%m-%d %H:%M") if u.created_at else ""
+        }
+        for u in users
+    ]
+
+
+@app.post("/api/users")
+def create_user(payload: dict, db: Session = Depends(get_db)):
+    user_id = payload.get("id", "").strip()
+    if len(user_id) != 8:
+        raise HTTPException(status_code=400, detail="ID pengguna harus 8 karakter")
+
+    existing = db.query(User).filter(User.id == user_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="ID pengguna sudah terdaftar")
+
+    password = payload.get("password", "password123")
+    user = User(
+        id=user_id,
+        name=payload.get("name", ""),
+        unit=payload.get("unit", ""),
+        roles=payload.get("roles", ["satker"]),
+        active_role=payload.get("activeRole", "satker"),
+        password_hash=pwd_context.hash(password),
+        is_active=payload.get("isActive", True),
+        phone=payload.get("phone")
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return {
+        "id": user.id,
+        "name": user.name,
+        "unit": user.unit,
+        "roles": user.roles,
+        "activeRole": user.active_role,
+        "isActive": user.is_active,
+        "message": "Pengguna berhasil ditambahkan"
+    }
+
+
+@app.put("/api/users/{user_id}")
+def update_user(user_id: str, payload: dict, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Pengguna tidak ditemukan")
+
+    user.name = payload.get("name", user.name)
+    user.unit = payload.get("unit", user.unit)
+    user.roles = payload.get("roles", user.roles)
+    user.active_role = payload.get("activeRole", user.active_role)
+    user.is_active = payload.get("isActive", user.is_active)
+    user.phone = payload.get("phone", user.phone)
+
+    if payload.get("password"):
+        user.password_hash = pwd_context.hash(payload["password"])
+
+    db.commit()
+    return {"id": user.id, "message": "Pengguna berhasil diperbarui"}
+
+
+@app.delete("/api/users/{user_id}")
+def delete_user(user_id: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Pengguna tidak ditemukan")
+    db.delete(user)
+    db.commit()
+    return {"status": "success", "message": "Pengguna berhasil dihapus"}
+
+
+# ======================================================================
+# MANAJEMEN MASTER RO (SUPER ADMIN)
+# ======================================================================
+@app.get("/api/master-ro")
+def get_master_ro(db: Session = Depends(get_db)):
+    items = db.query(MasterRo).order_by(MasterRo.program, MasterRo.kegiatan).all()
+    return [
+        {
+            "id": item.id,
+            "program": item.program,
+            "unitEselon1": item.unit_eselon1,
+            "kegiatan": item.kegiatan,
+            "unitEselon2": item.unit_eselon2,
+            "prioritasCheck": item.prioritas_check,
+            "kro": item.kro,
+            "ro": item.ro
+        }
+        for item in items
+    ]
+
+
+@app.post("/api/master-ro")
+def create_master_ro(payload: dict, db: Session = Depends(get_db)):
+    item = MasterRo(
+        id=f"RO-{uuid.uuid4().hex[:8].upper()}",
+        program=payload.get("program", ""),
+        unit_eselon1=payload.get("unitEselon1", ""),
+        kegiatan=payload.get("kegiatan", ""),
+        unit_eselon2=payload.get("unitEselon2", ""),
+        prioritas_check=payload.get("prioritasCheck", ""),
+        kro=payload.get("kro", ""),
+        ro=payload.get("ro", "")
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return {
+        "id": item.id,
+        "program": item.program,
+        "kegiatan": item.kegiatan,
+        "kro": item.kro,
+        "ro": item.ro,
+        "message": "Master RO berhasil ditambahkan"
+    }
+
+
+@app.delete("/api/master-ro/{ro_id}")
+def delete_master_ro(ro_id: str, db: Session = Depends(get_db)):
+    item = db.query(MasterRo).filter(MasterRo.id == ro_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Master RO tidak ditemukan")
+    db.delete(item)
+    db.commit()
+    return {"status": "success", "message": "Master RO berhasil dihapus"}
+
+
+# ======================================================================
+# MANAJEMEN KRITERIA AI (SUPER ADMIN)
+# ======================================================================
+@app.get("/api/criteria")
+def get_criteria(db: Session = Depends(get_db)):
+    criteria = db.query(Criterion).order_by(Criterion.id).all()
+    return [
+        {
+            "id": c.id,
+            "text": c.text,
+            "description": c.description,
+            "category": c.category,
+            "isActive": c.is_active
+        }
+        for c in criteria
+    ]
+
+
+@app.post("/api/criteria")
+def create_criterion(payload: dict, db: Session = Depends(get_db)):
+    criterion = Criterion(
+        text=payload.get("text", ""),
+        description=payload.get("description", ""),
+        category=payload.get("category", ""),
+        is_active=payload.get("isActive", True)
+    )
+    db.add(criterion)
+    db.commit()
+    db.refresh(criterion)
+    return {
+        "id": criterion.id,
+        "text": criterion.text,
+        "message": "Kriteria berhasil ditambahkan"
+    }
+
+
+@app.put("/api/criteria/{criterion_id}")
+def update_criterion(criterion_id: int, payload: dict, db: Session = Depends(get_db)):
+    criterion = db.query(Criterion).filter(Criterion.id == criterion_id).first()
+    if not criterion:
+        raise HTTPException(status_code=404, detail="Kriteria tidak ditemukan")
+
+    criterion.text = payload.get("text", criterion.text)
+    criterion.description = payload.get("description", criterion.description)
+    criterion.category = payload.get("category", criterion.category)
+    criterion.is_active = payload.get("isActive", criterion.is_active)
+
+    db.commit()
+    return {"id": criterion.id, "message": "Kriteria berhasil diperbarui"}
+
+
+@app.delete("/api/criteria/{criterion_id}")
+def delete_criterion(criterion_id: int, db: Session = Depends(get_db)):
+    criterion = db.query(Criterion).filter(Criterion.id == criterion_id).first()
+    if not criterion:
+        raise HTTPException(status_code=404, detail="Kriteria tidak ditemukan")
+    db.delete(criterion)
+    db.commit()
+    return {"status": "success", "message": "Kriteria berhasil dihapus"}
+
+
+# ======================================================================
+# LIST SUBMISSIONS (UNTUK DASHBOARD & VERIFIKASI)
+# ======================================================================
+@app.get("/api/submissions")
+def get_submissions(db: Session = Depends(get_db)):
+    subs = db.query(Submission).order_by(Submission.created_at.desc()).all()
+    return [
+        {
+            "id": s.id,
+            "ticketNumber": s.ticket_number,
+            "satkerUserId": s.satker_user_id,
+            "program": s.program,
+            "kegiatan": s.kegiatan,
+            "kro": s.kro,
+            "ro": s.ro,
+            "unitEselon1": s.unit_eselon1,
+            "unitEselon2": s.unit_eselon2,
+            "prioritas": s.prioritas,
+            "rabFileName": os.path.basename(s.rab_file_path) if s.rab_file_path else "",
+            "rabFileSize": s.rab_file_size,
+            "regulationId": s.regulation_id,
+            "regulationTitle": s.regulation_title,
+            "aiStatus": s.ai_status,
+            "aiScore": s.ai_score,
+            "aiReason": s.ai_reason,
+            "aiRecommendation": s.ai_recommendation,
+            "aiCriteriaResults": s.ai_criteria_results,
+            "verificationStatus": s.verification_status,
+            "verifikatorNotes": s.verifikator_notes,
+            "verifiedById": s.verified_by_id,
+            "verifiedAt": s.verified_at.strftime("%Y-%m-%d %H:%M") if s.verified_at else "",
+            "digitalSignatureHash": s.digital_signature_hash,
+            "createdAt": s.created_at.strftime("%Y-%m-%d %H:%M") if s.created_at else ""
+        }
+        for s in subs
+    ]
