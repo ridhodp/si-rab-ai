@@ -179,6 +179,40 @@ def toggle_regulation(reg_id: str, db: Session = Depends(get_db)):
     db.commit()
     return {"id": reg.id, "isActive": reg.is_active, "message": f"Status acuan regulasi berhasil diubah"}
 
+@app.put("/api/regulations/{reg_id}")
+def update_regulation(reg_id: str, payload: dict, db: Session = Depends(get_db)):
+    reg = db.query(Regulation).filter(Regulation.id == reg_id).first()
+    if not reg:
+        raise HTTPException(status_code=404, detail="Regulasi acuan tidak ditemukan")
+
+    if "title" in payload:
+        reg.title = payload["title"]
+    if "category" in payload:
+        reg.category = payload["category"]
+    if "description" in payload:
+        reg.description = payload["description"]
+    if "targetYear" in payload:
+        reg.target_year = payload["targetYear"]
+    if "isActive" in payload:
+        reg.is_active = bool(payload["isActive"])
+    if "extractedRulesSummary" in payload:
+        reg.extracted_text = payload["extractedRulesSummary"]
+
+    db.commit()
+    db.refresh(reg)
+    return {
+        "id": reg.id,
+        "title": reg.title,
+        "category": reg.category,
+        "description": reg.description,
+        "fileName": reg.file_name,
+        "fileSize": reg.file_size,
+        "isActive": reg.is_active,
+        "targetYear": reg.target_year,
+        "message": "Data regulasi acuan berhasil diperbarui",
+    }
+
+
 @app.delete("/api/regulations/{reg_id}")
 def delete_regulation(reg_id: str, db: Session = Depends(get_db)):
     reg = db.query(Regulation).filter(Regulation.id == reg_id).first()
@@ -200,6 +234,8 @@ async def submit_rab(
     unit_eselon1: str = Form(...),
     unit_eselon2: str = Form(...),
     prioritas: str = Form(...),
+    kategori: str = Form(""),
+    kategori_deskripsi: str = Form(""),
     satker_user_id: str = Form(...),
     rab_file: UploadFile = File(...),
     db: Session = Depends(get_db)
@@ -246,6 +282,8 @@ async def submit_rab(
         unit_eselon1=unit_eselon1,
         unit_eselon2=unit_eselon2,
         prioritas=prioritas,
+        kategori=kategori or None,
+        kategori_deskripsi=kategori_deskripsi or None,
         rab_file_path=f"uploads/{rab_file.filename}",
         rab_file_size=f"{round(len(pdf_bytes)/1024, 1)} KB",
         regulation_id=regulation_id,
@@ -416,6 +454,40 @@ def create_master_ro(payload: dict, db: Session = Depends(get_db)):
     }
 
 
+@app.put("/api/master-ro/{ro_id}")
+def update_master_ro(ro_id: str, payload: dict, db: Session = Depends(get_db)):
+    item = db.query(MasterRo).filter(MasterRo.id == ro_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Master RO tidak ditemukan")
+
+    field_map = {
+        "program": "program",
+        "unitEselon1": "unit_eselon1",
+        "kegiatan": "kegiatan",
+        "unitEselon2": "unit_eselon2",
+        "prioritasCheck": "prioritas_check",
+        "kro": "kro",
+        "ro": "ro",
+    }
+    for key, column in field_map.items():
+        if key in payload and payload[key] is not None:
+            setattr(item, column, payload[key])
+
+    db.commit()
+    db.refresh(item)
+    return {
+        "id": item.id,
+        "program": item.program,
+        "unitEselon1": item.unit_eselon1,
+        "kegiatan": item.kegiatan,
+        "unitEselon2": item.unit_eselon2,
+        "prioritasCheck": item.prioritas_check,
+        "kro": item.kro,
+        "ro": item.ro,
+        "message": "Master RO berhasil diperbarui",
+    }
+
+
 @app.delete("/api/master-ro/{ro_id}")
 def delete_master_ro(ro_id: str, db: Session = Depends(get_db)):
     item = db.query(MasterRo).filter(MasterRo.id == ro_id).first()
@@ -505,6 +577,8 @@ def get_submissions(db: Session = Depends(get_db)):
             "unitEselon1": s.unit_eselon1,
             "unitEselon2": s.unit_eselon2,
             "prioritas": s.prioritas,
+            "kategori1": s.kategori,
+            "kategoriDeskripsi": s.kategori_deskripsi,
             "rabFileName": os.path.basename(s.rab_file_path) if s.rab_file_path else "",
             "rabFileSize": s.rab_file_size,
             "regulationId": s.regulation_id,

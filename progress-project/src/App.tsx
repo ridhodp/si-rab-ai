@@ -14,7 +14,18 @@ import { VerifikatorView } from "./components/VerifikatorView";
 import { MasterRoView } from "./components/MasterRoView";
 import { ChangePasswordModal } from "./components/ChangePasswordModal";
 import { HelpModal } from "./components/HelpModal";
-import { authApi, usersApi, regulationsApi, submissionsApi, masterRoApi, criteriaApi } from "./services/api";
+import {
+  authApi,
+  usersApi,
+  regulationsApi,
+  submissionsApi,
+  masterRoApi,
+  criteriaApi,
+  toUserAccount,
+  toRegulationDocument,
+  toSubmissionData,
+  toHierarchyItem,
+} from "./services/api";
 
 // Helper to map any ActiveMenuKey to StandardMenuKey
 export const toStandardMenuKey = (menuKey: ActiveMenuKey): StandardMenuKey => {
@@ -207,10 +218,11 @@ export default function App() {
           criteriaApi.getAll(),
         ]);
 
-        if (usersData.length > 0) setUsers(usersData);
-        if (regulationsData.length > 0) setRegulations(regulationsData);
-        if (submissionsData.length > 0) setSubmissions(submissionsData);
-        if (masterRoData.length > 0) setMasterRoList(masterRoData);
+        const mappedUsers = usersData.map(toUserAccount);
+        if (mappedUsers.length > 0) setUsers(mappedUsers);
+        if (regulationsData.length > 0) setRegulations(regulationsData.map(toRegulationDocument));
+        if (submissionsData.length > 0) setSubmissions(submissionsData.map((s) => toSubmissionData(s, mappedUsers)));
+        if (masterRoData.length > 0) setMasterRoList(masterRoData.map(toHierarchyItem));
       } catch (error) {
         // API tidak tersedia - fallback ke data lokal secara diam-diam
         console.warn("API tidak tersedia, menggunakan data lokal:", error);
@@ -422,6 +434,7 @@ export default function App() {
   };
 
   const handleUpdateMasterRo = async (updatedItem: HierarchyItem) => {
+    if (!updatedItem.id) return;
     try {
       await masterRoApi.update(updatedItem.id, updatedItem);
     } catch (error) {

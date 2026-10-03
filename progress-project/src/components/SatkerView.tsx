@@ -360,9 +360,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
     setCurrentUnitEselon1("");
     setCurrentUnitEselon2("");
     setCurrentPrioritas("");
-    setFormKategori1("");
-    setFormKategori2("");
-    setFormKategori3("");
+    setSelectedKategori("");
 
     if (rabBlobUrl && rabBlobUrl.startsWith("blob:")) {
       URL.revokeObjectURL(rabBlobUrl);
@@ -391,9 +389,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
     setCurrentUnitEselon1(sub.unitEselon1);
     setCurrentUnitEselon2(sub.unitEselon2);
     setCurrentPrioritas(sub.prioritas);
-    setFormKategori1(sub.kategori1 || "");
-    setFormKategori2(sub.kategori2 || "");
-    setFormKategori3(sub.kategori3 || "");
+    setSelectedKategori(sub.kategori1 || "");
 
     setSelectedDetailSubmission(null);
     if (onSelectMenu) {
@@ -588,9 +584,9 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
       pdfDataUrl: rabBlobUrl || rabDataUrl,
       activeRegulationTitle: analysis?.activeRegulationTitle || regLabel,
 
-      // 3 New Category Fields
-      kategori: selectedKategori,
-      kategori_deskripsi: selectedKategori ? KATEGORI_DESCRIPTIONS[selectedKategori] : "",
+      // Kategori RAB (dropdown tunggal, disimpan pada kategori1 agar konsisten dengan UI)
+      kategori1: selectedKategori,
+      kategoriDeskripsi: selectedKategori ? KATEGORI_DESCRIPTIONS[selectedKategori] : "",
 
       // User Logging Metadata
       createdBy: userLabel,

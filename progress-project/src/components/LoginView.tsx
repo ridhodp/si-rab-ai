@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { UserAccount } from "../types";
+import { UserAccount, UserRole } from "../types";
 import { INITIAL_USERS } from "../data/initialUsers";
-import { authApi } from "../services/api";
+import { authApi, toUserAccount } from "../services/api";
 import { Lock, User, AlertCircle, HelpCircle, ArrowRight, Eye, EyeOff, Sun, Moon, UserPlus } from "lucide-react";
 
 interface LoginViewProps {
@@ -44,7 +44,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ users, theme = "light", on
 
     if (!foundUser.isActive) {
       setErrorMessage("Akun ini sedang dinonaktifkan oleh Administrator.");
-      return;m
+      return;
     }
 
     onLoginSuccess(foundUser);
@@ -302,7 +302,7 @@ const RegisterModal: React.FC<{
   const [regId, setRegId] = useState("");
   const [regName, setRegName] = useState("");
   const [regUnit, setRegUnit] = useState("");
-  const [regRole, setRegRole] = useState("satker");
+  const [regRole, setRegRole] = useState<UserRole>("satker");
   const [regPassword, setRegPassword] = useState("");
   const [regConfirmPassword, setRegConfirmPassword] = useState("");
   const [regError, setRegError] = useState("");
@@ -338,7 +338,8 @@ const RegisterModal: React.FC<{
         password: regPassword,
         role: regRole,
       });
-      onRegisterSuccess(user);
+      // Backend hanya mengirim hash, jadi lengkapi field dari input form
+      onRegisterSuccess({ ...toUserAccount(user), password: regPassword });
     } catch (error) {
       // Fallback: register lokal jika API tidak tersedia
       const localUser: UserAccount = {
@@ -349,6 +350,7 @@ const RegisterModal: React.FC<{
         activeRole: regRole,
         password: regPassword,
         isActive: true,
+        createdAt: new Date().toISOString(),
       };
       onRegisterSuccess(localUser);
     } finally {
@@ -415,7 +417,7 @@ const RegisterModal: React.FC<{
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Role</label>
             <select
               value={regRole}
-              onChange={(e) => setRegRole(e.target.value)}
+              onChange={(e) => setRegRole(e.target.value as UserRole)}
               className="w-full px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all"
             >
               <option value="satker">Satuan Kerja (Satker)</option>

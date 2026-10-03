@@ -102,8 +102,9 @@ export interface SubmissionData {
   pdfDataUrl?: string;
   activeRegulationTitle?: string;
 
-  // New Category Fields (Teks)
+  // Kategori RAB (dropdown tunggal, diisi dari form Satker)
   kategori1?: string;
+  kategoriDeskripsi?: string;
   kategori2?: string;
   kategori3?: string;
 

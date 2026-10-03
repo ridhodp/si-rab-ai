@@ -48,6 +48,8 @@ class Submission(Base):
     unit_eselon1 = Column(String(150), nullable=False)
     unit_eselon2 = Column(String(150), nullable=False)
     prioritas = Column(String(50), nullable=False)
+    kategori = Column(String(100), nullable=True)            # Kategori 1..4 (dropdown tunggal)
+    kategori_deskripsi = Column(Text, nullable=True)
     rab_file_path = Column(String(255), nullable=False)
     rab_file_size = Column(String(50), nullable=True)
     regulation_id = Column(String(50), ForeignKey("regulations.id"), nullable=True)
