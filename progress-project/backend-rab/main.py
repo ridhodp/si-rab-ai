@@ -10,6 +10,11 @@ from passlib.context import CryptContext
 from database import engine, get_db, Base
 from models import User, Submission, Regulation, MasterRo, Criterion
 from services.gemini_checker import analyze_rab_document, extract_pdf_text
+from services.pdf_extractor import extract_rab_data
+from services.ollama_checker import analyze_rab_with_ollama, check_ollama_available
+
+# AI Engine Priority: "ollama" atau "gemini"
+AI_ENGINE = os.getenv("AI_ENGINE", "gemini")
 
 # Buat tabel otomatis jika belum ada di PostgreSQL
 Base.metadata.create_all(bind=engine)
@@ -31,7 +36,12 @@ app.add_middleware(
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "service": "API Pengecekan Dokumen RAB AI"}
+    return {
+        "status": "ok",
+        "service": "API Pengecekan Dokumen RAB AI",
+        "aiEngine": AI_ENGINE,
+        "ollamaAvailable": check_ollama_available() if AI_ENGINE == "ollama" else None,
+    }
 
 @app.post("/api/auth/login")
 def login(payload: dict, db: Session = Depends(get_db)):
@@ -260,14 +270,24 @@ async def submit_rab(
             except Exception:
                 pass
 
-    # 1. Panggil Gemini AI Service dengan rujukan ketentuan acuan Super Admin
-    ai_result = analyze_rab_document(
-        pdf_bytes=pdf_bytes,
-        file_name=rab_file.filename,
-        regulation_bytes=regulation_bytes,
-        regulation_text=regulation_text,
-        regulation_title=regulation_title
-    )
+    # 1. Ekstrak data terstruktur dari PDF
+    structured_data = extract_rab_data(pdf_bytes)
+
+    # 2. Panggil AI Engine (Ollama atau Gemini)
+    ai_result = None
+    if AI_ENGINE == "ollama" and check_ollama_available():
+        ai_result = analyze_rab_with_ollama(structured_data)
+    
+    if not ai_result:
+        # Fallback ke Gemini
+        ai_result = analyze_rab_document(
+            pdf_bytes=pdf_bytes,
+            file_name=rab_file.filename,
+            regulation_bytes=regulation_bytes,
+            regulation_text=regulation_text,
+            regulation_title=regulation_title
+        )
+    
     extracted_text = ai_result.pop("extractedText", "")
     ticket_number = f"TIKET-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
 
