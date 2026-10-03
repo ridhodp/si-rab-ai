@@ -8,7 +8,7 @@ import requests
 from typing import Any
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5-coder:3b")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3.5:4b")
 
 
 def analyze_rab_with_ollama(extracted_data: dict[str, Any]) -> dict[str, Any]:
@@ -64,7 +64,7 @@ Balas HANYA dalam format JSON valid:
       "notes": "bukti kutipan dari file RAB dan perbandingannya dengan regulasi acuan",
       "verifierStatus": "Lolos" atau "Ditolak",
       "verifierNotes": ""
-    }}
+    }}, ... 20 kriteria lengkap
   ]
 }}
 """
@@ -75,7 +75,6 @@ Balas HANYA dalam format JSON valid:
             json={
                 "model": OLLAMA_MODEL,
                 "prompt": prompt,
-                "format": "json",
                 "stream": False,
                 "options": {
                     "temperature": 0.1,
@@ -96,7 +95,6 @@ Balas HANYA dalam format JSON valid:
             raw_text = raw_text[:-3]
 
         result = json.loads(raw_text.strip())
-        result["extractedText"] = extracted_data.get("rawText", "")
         return result
 
     except requests.exceptions.ConnectionError:
