@@ -615,6 +615,27 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
     setIsResultsCollapsed(false);
     setIsAnalyzing(false);
 
+    // Reset formulir Pengajuan Baru agar isinya bersih kembali setelah submit & telaah AI
+    setSelectedProgram("");
+    setSelectedKegiatan("");
+    setSelectedKro("");
+    setSelectedRo("");
+    setSelectedYear("");
+    setCurrentUnitEselon1("");
+    setCurrentUnitEselon2("");
+    setCurrentPrioritas("");
+    setSelectedKategori("");
+    setRabFile(null);
+    setRabFileName("");
+    setRabDataUrl(undefined);
+    setRabBlobUrl(undefined);
+    setUploadError(null);
+    setAnalysisProgressText("");
+
+    // Kosongkan nilai input file agar berkas lama benar-benar hilang dari form
+    const fileInput = document.getElementById("rab-file-upload-input") as HTMLInputElement | null;
+    if (fileInput) fileInput.value = "";
+
     try {
       onAddSubmission(newSubmission);
     } catch (e) {
