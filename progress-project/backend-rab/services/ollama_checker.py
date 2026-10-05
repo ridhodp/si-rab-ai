@@ -11,63 +11,70 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3.5:4b")
 
 
-def analyze_rab_with_ollama(extracted_data: dict[str, Any]) -> dict[str, Any]:
+def analyze_rab_with_ollama(extracted_text: str, file_name: str, regulation_text: str = None, regulation_title: str = None) -> dict[str, Any]:
     """
-    Kirim hasil ekstraksi PDF ke model Ollama untuk analisis.
+    Kirim hasil ekstraksi PDF ke model Ollama (lokal, non-cloud) untuk analisis.
+    Prompt dan aturan pemeriksaan sama dengan prompt review RAB yang sudah ada.
     """
-    # Siapkan prompt dengan data terstruktur
-    prompt = f"""Anda adalah Pejabat Verifikator Anggaran Ahli Kementerian Keuangan & Komdigi RI.
-Telaah dokumen PDF Rincian Anggaran Biaya (RAB) berikut terhadap 20 Kriteria Wajib.
+    reg_info = regulation_title or "Standar Biaya Masukan (SBM) & Petunjuk Teknis Kementerian Keuangan / Komdigi RI"
 
-DATA EKSTRAKSI PDF (TERSTRUKTUR):
-{json.dumps(extracted_data, indent=2, ensure_ascii=False)}
+    prompt = f"""
+    Anda adalah Pejabat Verifikator Anggaran Ahli Kementerian Keuangan & Komdigi RI.
+    Telaah dokumen PDF Rincian Anggaran Biaya (RAB) berikut terhadap 20 Kriteria Wajib DENGAN MERUJUK SECARA KETAT pada KETENTUAN/PERATURAN ACUAN YANG TELAH DITETAPKAN OLEH SUPER ADMIN:
+    Dokumen Regulasi Acuan: {reg_info}
 
-PEDOMAN TELAAH:
-1. Bandingkan setiap rincian akun belanja, komponen biaya, dan satuan tarif terhadap batas tertinggi Standar Biaya Masukan (SBM) dan Juknis.
-2. Jika terdapat honorarium narasumber, biaya konsumsi rapat, uang harian perjadin, sewa fasilitas, atau harga satuan yang MELEBIHI batas tarif pada dokumen peraturan acuan, berikan status "failed" pada kriteria terkait dan sebutkan batas tarif maksimal dari dokumen acuan pada kolom "notes".
-3. Periksa ketaatan Bagan Akun Standar (BAS 6 digit), pemisahan biaya pokok/pendukung, kalkulasi perkalian, tarif pajak PPN (12%) / PPh, serta lembar pengesahan PPK bertanda tangan & NIP.
+    PEDOMAN TELAAH BERDASARKAN PERATURAN ACUAN SUPER ADMIN:
+    1. Bandingkan setiap rincian akun belanja, komponen biaya, dan satuan tarif dalam berkas RAB ({file_name}) terhadap batas tertinggi Standar Biaya Masukan (SBM) dan Juknis yang tercantum pada dokumen peraturan acuan.
+    2. Jika terdapat honorarium narasumber, biaya konsumsi rapat, uang harian perjadin, sewa fasilitas, atau harga satuan yang MELEBIHI batas tarif pada dokumen peraturan acuan, Anda WAJIB memberikan status "failed" pada kriteria terkait dan menyebutkan batas tarif maksimal dari dokumen acuan pada kolom "notes".
+    3. Periksa ketaatan Bagan Akun Standar (BAS 6 digit), pemisahan biaya pokok/pendukung, kalkulasi perkalian, tarif pajak PPN (12%) / PPh, serta lembar pengesahan PPK bertanda tangan & NIP.
 
-20 Kriteria Wajib:
-1. Bagan Akun Standar (BAS 6 digit)
-2. Belanja Bahan (521211) sesuai SBM
-3. Belanja Konsumsi Rapat (521219)
-4. Belanja Honor Output Kegiatan (521213)
-5. Belanja Jasa Profesi Narasumber (522151)
-6. Belanja Sewa Gedung/Ruangan (522141)
-7. Belanja Langganan Daya & Jasa (522111)
-8. Belanja Pemeliharaan Peralatan (523121)
-9. Biaya Perjalanan Dinas Dalam Negeri (524111)
-10. Transportasi Lokal & Uang Harian SBM
-11. Kesesuaian Volume & Satuan Ukur
-12. Kejelasan Komponen Biaya Rinci
-13. Pemisahan Biaya Pokok & Biaya Pendukung
-14. Perhitungan Matematis Perkalian Akurat
-15. Perlakuan Pajak PPN (12%) / PPh Pasal 21/23
-16. Rasionalitas Harga Pasar & Tidak Pemborosan
-17. Tidak Terdapat Duplikasi Anggaran
-18. Total Biaya Tidak Melampaui Batas Pagu
-19. Rekapitulasi Rincian Sinkron dengan Total Akhir
-20. Lembar Pengesahan PPK Bertanda Tangan & NIP
+    20 Kriteria Wajib:
+    1. Bagan Akun Standar (BAS 6 digit)
+    2. Belanja Bahan (521211) sesuai SBM
+    3. Belanja Konsumsi Rapat (521219)
+    4. Belanja Honor Output Kegiatan (521213)
+    5. Belanja Jasa Profesi Narasumber (522151)
+    6. Belanja Sewa Gedung/Ruangan (522141)
+    7. Belanja Langganan Daya & Jasa (522111)
+    8. Belanja Pemeliharaan Peralatan (523121)
+    9. Biaya Perjalanan Dinas Dalam Negeri (524111)
+    10. Transportasi Lokal & Uang Harian SBM
+    11. Kesesuaian Volume & Satuan Ukur
+    12. Kejelasan Komponen Biaya Rinci
+    13. Pemisahan Biaya Pokok & Biaya Pendukung
+    14. Perhitungan Matematis Perkalian Akurat
+    15. Perlakuan Pajak PPN (12%) / PPh Pasal 21/23
+    16. Rasionalitas Harga Pasar & Tidak Pemborosan
+    17. Tidak Terdapat Duplikasi Anggaran
+    18. Total Biaya Tidak Melampaui Batas Pagu
+    19. Rekapitulasi Rincian Sinkron dengan Total Akhir
+    20. Lembar Pengesahan PPK Bertanda Tangan & NIP
 
-Balas HANYA dalam format JSON valid:
-{{
-  "aiStatus": "LOLOS" atau "TIDAK LOLOS",
-  "aiScore": integer 0-100,
-  "aiReason": "ringkasan uraian temuan dengan menyebutkan rujukan berkas dan peraturan acuan",
-  "aiRecommendation": "langkah tindak lanjut rekomendasi mengacu pada peraturan acuan",
-  "activeRegulationTitle": "nama peraturan acuan",
-  "criteriaResults": [
+    Balas HANYA dalam format JSON valid:
     {{
-      "id": 1,
-      "text": "nama kriteria",
-      "status": "passed" atau "failed",
-      "notes": "bukti kutipan dari file RAB dan perbandingannya dengan regulasi acuan",
-      "verifierStatus": "Lolos" atau "Ditolak",
-      "verifierNotes": ""
-    }}, ... 20 kriteria lengkap
-  ]
-}}
-"""
+      "aiStatus": "LOLOS" atau "TIDAK LOLOS",
+      "aiScore": integer 0-100,
+      "aiReason": "ringkasan uraian temuan dengan menyebutkan rujukan berkas {file_name} dan peraturan acuan {reg_info}",
+      "aiRecommendation": "langkah tindak lanjut rekomendasi mengacu pada peraturan acuan",
+      "activeRegulationTitle": "{reg_info}",
+      "criteriaResults": [
+         {{
+           "id": 1,
+           "text": "nama kriteria",
+           "status": "passed" atau "failed",
+           "notes": "bukti kutipan dari file RAB dan perbandingannya dengan regulasi acuan",
+           "verifierStatus": "Lolos" atau "Ditolak",
+           "verifierNotes": ""
+         }}, ... 20 kriteria lengkap
+      ]
+    }}
+
+    Teks Ketentuan / Peraturan Acuan Super Admin ({reg_info}):
+    {(regulation_text or "[Tidak ada teks regulasi]")[:50000]}
+
+    Teks hasil ekstraksi PDF RAB ({file_name}) untuk membantu penelaahan:
+    {extracted_text[:50000]}
+    """
 
     try:
         response = requests.post(
@@ -81,7 +88,7 @@ Balas HANYA dalam format JSON valid:
                     "num_ctx": 8192,
                 },
             },
-            timeout=120,
+            timeout=600,
         )
         response.raise_for_status()
 
@@ -95,6 +102,9 @@ Balas HANYA dalam format JSON valid:
             raw_text = raw_text[:-3]
 
         result = json.loads(raw_text.strip())
+        result["extractedText"] = extracted_text
+        if "activeRegulationTitle" not in result or not result["activeRegulationTitle"]:
+            result["activeRegulationTitle"] = reg_info
         return result
 
     except requests.exceptions.ConnectionError:

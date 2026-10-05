@@ -9,12 +9,11 @@ from passlib.context import CryptContext
 
 from database import engine, get_db, Base
 from models import User, Submission, Regulation, MasterRo, Criterion
-from services.gemini_checker import analyze_rab_document, extract_pdf_text
-from services.pdf_extractor import extract_rab_data
+from services.gemini_checker import extract_pdf_text, fallback_inspect_rab_text
 from services.ollama_checker import analyze_rab_with_ollama, check_ollama_available
 
-# AI Engine Priority: "ollama" atau "gemini"
-AI_ENGINE = os.getenv("AI_ENGINE", "gemini")
+# AI Engine: "ollama" (default, lokal) atau "gemini"
+AI_ENGINE = os.getenv("AI_ENGINE", "ollama")
 
 # Buat tabel otomatis jika belum ada di PostgreSQL
 Base.metadata.create_all(bind=engine)
@@ -270,25 +269,36 @@ async def submit_rab(
             except Exception:
                 pass
 
-    # 1. Ekstrak data terstruktur dari PDF
-    structured_data = extract_rab_data(pdf_bytes)
-
-    # 2. Panggil AI Engine (Ollama atau Gemini)
+    # 1. Ekstrak teks dari PDF
+    # 2. Panggil AI Engine (Ollama lokal)
     ai_result = None
+    extracted_text = extract_pdf_text(pdf_bytes)
     if AI_ENGINE == "ollama" and check_ollama_available():
-        ai_result = analyze_rab_with_ollama(structured_data)
-    
-    if not ai_result:
-        # Fallback ke Gemini
-        ai_result = analyze_rab_document(
-            pdf_bytes=pdf_bytes,
+        ai_result = analyze_rab_with_ollama(
+            extracted_text=extracted_text,
             file_name=rab_file.filename,
-            regulation_bytes=regulation_bytes,
             regulation_text=regulation_text,
-            regulation_title=regulation_title
+            regulation_title=regulation_title,
         )
-    
-    extracted_text = ai_result.pop("extractedText", "")
+
+    if not ai_result:
+        if AI_ENGINE == "ollama":
+            # Fallback deterministik lokal (tanpa cloud/Gemini)
+            print("Ollama tidak tersedia/gagal, menggunakan inspeksi deterministik lokal.")
+            active_reg_info = regulation_title or "Standar Biaya Masukan (SBM) & Petunjuk Teknis Kementerian Keuangan / Komdigi RI"
+            ai_result = fallback_inspect_rab_text(extracted_text, rab_file.filename, active_reg_info)
+        else:
+            # Fallback ke Gemini (non-default, hanya jika AI_ENGINE=gemini)
+            from services.gemini_checker import analyze_rab_document
+            ai_result = analyze_rab_document(
+                pdf_bytes=pdf_bytes,
+                file_name=rab_file.filename,
+                regulation_bytes=regulation_bytes,
+                regulation_text=regulation_text,
+                regulation_title=regulation_title
+            )
+
+    extracted_text = ai_result.pop("extractedText", extracted_text)
     ticket_number = f"TIKET-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
 
     submission = Submission(
