@@ -65,6 +65,10 @@ export const getDefaultMenuForRole = (role: UserRole): StandardMenuKey => {
   }
 };
 
+// Durasi sesi login: 15 menit tanpa aktivitas -> otomatis logout
+const SESSION_TIMEOUT_MINUTES = 15;
+const SESSION_EXPIRY_KEY = "rab_app_session_expiry";
+
 export default function App() {
   // Users State (Single-Role per User: Super Admin, Satker, Verifikator; filter out old multi-role id "19871212")
   const [users, setUsers] = useState<UserAccount[]>(() => {
@@ -144,6 +148,13 @@ export default function App() {
       try {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.id && parsed.id.length === 8 && parsed.id !== "19871212") {
+          // Tolak sesi yang sudah melewati batas waktu 15 menit
+          const expiry = localStorage.getItem(SESSION_EXPIRY_KEY);
+          if (expiry && Date.now() > Number(expiry)) {
+            localStorage.removeItem("rab_app_current_user");
+            localStorage.removeItem(SESSION_EXPIRY_KEY);
+            return null;
+          }
           return parsed;
         }
       } catch (e) {
@@ -338,6 +349,8 @@ export default function App() {
   // Handle Login
   const handleLogin = (user: UserAccount) => {
     setCurrentUser(user);
+    // Mulai hitung sesi 15 menit
+    localStorage.setItem(SESSION_EXPIRY_KEY, String(Date.now() + SESSION_TIMEOUT_MINUTES * 60 * 1000));
     const role = user.roles[0] || user.activeRole || "satker";
     setActiveRole(role);
     setActiveMenu(getDefaultMenuForRole(role));
@@ -349,8 +362,44 @@ export default function App() {
     const userName = currentUser?.name;
     setCurrentUser(null);
     localStorage.removeItem("rab_app_current_user");
+    localStorage.removeItem(SESSION_EXPIRY_KEY);
     showToast("Berhasil Keluar", userName ? `Sampai jumpa, ${userName}` : "Anda telah keluar dari sistem", "info");
   };
+
+  // Reset timer sesi setiap ada aktivitas pengguna (mousemove/klik/keyboard/scroll)
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const resetTimer = () => {
+      localStorage.setItem(SESSION_EXPIRY_KEY, String(Date.now() + SESSION_TIMEOUT_MINUTES * 60 * 1000));
+    };
+
+    const activityEvents = ["mousemove", "mousedown", "keydown", "scroll", "touchstart", "wheel"];
+    let debounceHandle: ReturnType<typeof setTimeout> | null = null;
+    const onActivity = () => {
+      if (debounceHandle) clearTimeout(debounceHandle);
+      debounceHandle = setTimeout(resetTimer, 1000);
+    };
+
+    activityEvents.forEach((evt) => window.addEventListener(evt, onActivity, { passive: true }));
+
+    // Cek kedaluwarsa sesi tiap 15 detik
+    const expiryCheck = setInterval(() => {
+      const expiry = localStorage.getItem(SESSION_EXPIRY_KEY);
+      if (expiry && Date.now() > Number(expiry)) {
+        setCurrentUser(null);
+        localStorage.removeItem("rab_app_current_user");
+        localStorage.removeItem(SESSION_EXPIRY_KEY);
+        showToast("Sesi Berakhir", `Anda keluar otomatis karena tidak ada aktivitas selama ${SESSION_TIMEOUT_MINUTES} menit.`, "info");
+      }
+    }, 15000);
+
+    return () => {
+      activityEvents.forEach((evt) => window.removeEventListener(evt, onActivity));
+      if (debounceHandle) clearTimeout(debounceHandle);
+      clearInterval(expiryCheck);
+    };
+  }, [currentUser]);
 
   // User CRUD by Super Admin
   const handleAddUser = async (newUser: UserAccount) => {
