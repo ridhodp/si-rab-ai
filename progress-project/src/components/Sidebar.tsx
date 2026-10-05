@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeRole, activeMenu, onSele
   // Specific ordering per role:
   // - Super Admin: 1 to 6
   // - ROCAN (verif): Input Acuan, Input Checklist, Input Master RO, > Verifikasi
-  // - Satker: Daftar RAB, > Verifikasi, Input Acuan, Input Checklist, Input Master RO
+  // - Satker: Daftar RAB, Input Acuan, Input Checklist, Input Master RO
   const getOrderedMenuKeysForRole = (role: UserRole): StandardMenuKey[] => {
     switch (role) {
       case "superadmin":
@@ -145,7 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeRole, activeMenu, onSele
       case "verifikator":
         return ["menu_acuan", "menu_checklist", "menu_master_ro", "menu_verification"];
       case "satker":
-        return ["menu_rab_list", "menu_verification", "menu_acuan", "menu_checklist", "menu_master_ro"];
+        return ["menu_rab_list", "menu_acuan", "menu_checklist", "menu_master_ro"];
     }
   };
 

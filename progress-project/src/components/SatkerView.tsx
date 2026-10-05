@@ -98,16 +98,14 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
 }) => {
   const activeRegulations = regulations.filter((r) => r.isActive);
 
-  // Sub Tab state for Daftar RAB vs Form Pengajuan
-  const [activeRabSubTab, setActiveRabSubTab] = useState<"list" | "form">(() => {
-    return activeMenu === "satker_form" ? "form" : "list";
-  });
+  // Form Pengajuan RAB Baru kini berada di dalam Pembahasan 2 (toggle tombol "Pengajuan Baru")
+  const [showRabForm, setShowRabForm] = useState(false);
 
   useEffect(() => {
     if (activeMenu === "satker_form") {
-      setActiveRabSubTab("form");
-    } else if (activeMenu === "satker_list" || activeMenu === "menu_rab_list") {
-      setActiveRabSubTab("list");
+      setShowRabForm(true);
+      setIsPembahasan2Collapsed(false);
+      setIsUnifiedFormCollapsed(false);
     }
   }, [activeMenu]);
 
@@ -653,39 +651,9 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
         </div>
       </div>
 
-      {/* Sub Navigation Tabs for Daftar RAB */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
-        <button
-          type="button"
-          onClick={() => setActiveRabSubTab("list")}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-            activeRabSubTab === "list"
-              ? "bg-cyan-600 text-white shadow-md shadow-cyan-600/20 ring-1 ring-cyan-500"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-          }`}
-        >
-          <FileSpreadsheet className="w-4 h-4" />
-          <span>Daftar &amp; Riwayat Dokumen RAB ({submissions.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveRabSubTab("form")}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-            activeRabSubTab === "form"
-              ? "bg-cyan-600 text-white shadow-md shadow-cyan-600/20 ring-1 ring-cyan-500"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-          }`}
-        >
-          <Upload className="w-4 h-4" />
-          <span>Form Pengajuan RAB Baru</span>
-        </button>
-      </div>
-
       {/* ================================================================== */}
       {/* 1. VIEW SUB-TAB: DAFTAR & RIWAYAT RAB */}
       {/* ================================================================== */}
-      {activeRabSubTab === "list" && (
         <div className="space-y-10 sm:space-y-12 animate-fadeIn">
           {/* SECTION 1: PEMBAHASAN 1 • RINGKASAN STATUS VERIFIKASI BERKAS PDF (TETAP SAMA) */}
           <div className="relative bg-white dark:bg-slate-900 border-2 border-cyan-500 dark:border-cyan-500 rounded-2xl p-6 sm:p-8 pt-8 sm:pt-9 shadow-sm space-y-6 sm:space-y-7 transition-all">
@@ -779,19 +747,33 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                 </p>
               </div>
 
-              <button
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => { setShowRabForm(true); setIsPembahasan2Collapsed(false); setIsUnifiedFormCollapsed(false); setTimeout(() => document.getElementById("unified-rab-form")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
+                  className="h-8 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                  title="Ajukan Dokumen RAB Baru"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Pengajuan Baru</span>
+                </button>
+
+                <button
                 type="button"
                 onClick={() => setIsPembahasan2Collapsed(!isPembahasan2Collapsed)}
-                className="h-8 px-3 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold self-start sm:self-auto"
+                className="h-8 px-3 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold"
                 title={isPembahasan2Collapsed ? "Perluas Tabel" : "Minimize Tabel"}
               >
                 <span>{isPembahasan2Collapsed ? "Perluas" : "Minimize"}</span>
                 {isPembahasan2Collapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
               </button>
+              </div>
             </div>
 
             {!isPembahasan2Collapsed && (
               <div className="space-y-6 animate-fadeIn">
+                {!showRabForm && (
+                <>
                 {/* ------------------------------------------------------------- */}
                 {/* FORM FILTER PENCARIAN DOKUMEN (5 FIELD SESUAI INSTRUKSI) */}
                 {/* 1. Jenis Dokumen (Teks) */}
@@ -943,7 +925,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                             <td colSpan={8} className="text-center py-14 text-slate-400 dark:text-slate-500">
                               <FileSpreadsheet className="w-9 h-9 mx-auto mb-2.5 opacity-50" />
                               <p className="font-bold text-xs">Tidak ada dokumen PDF RAB yang sesuai dengan filter.</p>
-                              <p className="text-[11px] mt-1 text-slate-400">Silakan sesuaikan parameter pencarian atau gunakan menu "Form Pengajuan RAB Baru".</p>
+                              <p className="text-[11px] mt-1 text-slate-400">Silakan sesuaikan parameter pencarian atau gunakan tombol "Pengajuan Baru" pada Pembahasan 2.</p>
                             </td>
                           </tr>
                         ) : (
@@ -1135,17 +1117,11 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                     </table>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                </>
+                )}
 
-      {/* ================================================================== */}
-      {/* 2. VIEW SUB-TAB: FORM PENGAJUAN RAB BARU */}
-      {/* ================================================================== */}
-      {activeRabSubTab === "form" && (
-        <div className="space-y-10 sm:space-y-12 animate-fadeIn">
+            {showRabForm && (
+        <div id="unified-rab-form" className="space-y-10 sm:space-y-12 animate-fadeIn">
           {/* GABUNGAN PEMBAHASAN 1 & PEMBAHASAN 2 MENJADI SATU KESATUAN FORM */}
           <div className="relative bg-white dark:bg-slate-900 border-2 border-cyan-500 dark:border-cyan-500 rounded-2xl p-6 sm:p-8 pt-8 sm:pt-9 shadow-sm space-y-6 sm:space-y-7 transition-all">
             {/* Outline Label Badge Terpadu */}
@@ -1165,6 +1141,17 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                 </p>
               </div>
 
+              <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowRabForm(false)}
+                className="h-8 px-3 rounded-lg text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 transition-colors cursor-pointer inline-flex items-center gap-1.5 text-xs font-semibold"
+                title="Tutup Formulir"
+              >
+                <XCircle className="w-4 h-4" />
+                <span>Tutup</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setIsUnifiedFormCollapsed(!isUnifiedFormCollapsed)}
@@ -1174,6 +1161,7 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                 <span>{isUnifiedFormCollapsed ? "Perluas" : "Minimize"}</span>
                 {isUnifiedFormCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
               </button>
+              </div>
             </div>
 
             {!isUnifiedFormCollapsed && (
@@ -1667,7 +1655,13 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
             </div>
           )}
         </div>
-      )}
+            )}
+
+              </div>
+            )}
+          </div>
+        </div>
+
 
       {/* ================================================================== */}
       {/* MODAL: DETAIL SUBMISSION (READ)                                     */}

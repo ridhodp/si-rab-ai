@@ -26,7 +26,7 @@ const getMenuGuides = (role: UserRole): Record<string, MenuGuide> => {
       steps: [
         "Lihat statistik utama: total pengguna, regulasi aktif, dan dokumen RAB",
         "Periksa status verifikasi terbaru di bagian riwayat pengajuan",
-        "Gunakan shortcut 'Form Pengajuan RAB Baru' untuk membuat pengajuan cepat",
+        "Gunakan tombol 'Pengajuan Baru' di Pembahasan 2 untuk pengajuan cepat",
       ],
       tips: [
         "Dashboard menampilkan data real-time berdasarkan role Anda",
@@ -102,7 +102,7 @@ const getMenuGuides = (role: UserRole): Record<string, MenuGuide> => {
       icon: FileSpreadsheet,
       description: "Pengajuan dan riwayat dokumen RAB yang telah dibuat.",
       steps: [
-        "Klik 'Form Pengajuan RAB Baru' untuk membuat pengajuan",
+        "Klik tombol 'Pengajuan Baru' di Pembahasan 2 untuk membuat pengajuan",
         "Isi formulir: pilih RO, isi komponen anggaran",
         "Upload file PDF RAB resmi",
         "Klik 'Kirim' untuk submit ke verifikator",
@@ -140,7 +140,7 @@ const getMenuGuides = (role: UserRole): Record<string, MenuGuide> => {
     return rest;
   }
   if (role === "satker") {
-    const { menu_users, ...rest } = guides;
+    const { menu_users, menu_verification, ...rest } = guides;
     return rest;
   }
   return guides;

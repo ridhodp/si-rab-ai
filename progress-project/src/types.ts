@@ -16,7 +16,7 @@ export const ROLE_PERMISSIONS_MATRIX: Record<StandardMenuKey, Record<UserRole, A
   menu_checklist: { superadmin: "E", verifikator: "E", satker: "V" },
   menu_master_ro: { superadmin: "E", verifikator: "E", satker: "V" },
   menu_rab_list: { superadmin: "E", verifikator: "NONE", satker: "E" },
-  menu_verification: { superadmin: "E", verifikator: "E", satker: "V" },
+  menu_verification: { superadmin: "E", verifikator: "E", satker: "NONE" },
 };
 
 export interface UserAccount {

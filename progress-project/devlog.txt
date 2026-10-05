@@ -1,0 +1,53 @@
+
+> react-example@0.0.0 dev
+> vite --port=3000 --host=0.0.0.0
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:11:27). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+[2m10.15.28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because vite config has changed
+
+  [32m[1mVITE[22m v8.3.0[39m  [2mready in [0m[1m1975[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3000[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.100.1:[1m3000[22m/[39m  [2mEthernet 3[22m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://10.99.8.206:[1m3000[22m/[39m    [2mWi-Fi[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m10.15.30[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+[2m10.15.32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m10.16.39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SatkerView.tsx[22m
+[2m10.16.45[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SatkerView.tsx[22m
+[2m10.17.01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SatkerView.tsx[22m
+The request id "C:\airen-main\node_modules\.vite\deps\lucide-react.js" is outside of Vite serving allow list.
+
+- C:/SI RAB AI/progress-project
+
+Refer to docs https://vite.dev/config/server-options.html#server-fs-allow for configurations and more details.
+
+The request id "C:\airen-main\node_modules\.vite\deps\react.js" is outside of Vite serving allow list.
+The request id "C:\airen-main\node_modules\.vite\deps\react-dom_client.js" is outside of Vite serving allow list.
+The request id "C:\airen-main\node_modules\.vite\deps\react_jsx-dev-runtime.js" is outside of Vite serving allow list.
+[2m10.24.39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SatkerView.tsx[22m
+[2m10.24.45[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SatkerView.tsx[22m
+[2m10.31.32[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mAPI tidak tersedia, menggunakan data lokal: TypeError: Failed to fetch
+    at apiFetch (http://localhost:3000/src/services/api.ts:8:25)
+    at Object.getAll (http://localhost:3000/src/services/api.ts:37:16)
+    at fetchData (http://localhost:3000/src/App.tsx:187:15)
+    at http://localhost:3000/src/App.tsx:205:3
+    at Object.react_stack_bottom_frame (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:14178:13)
+    at runWithFiberInDEV (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:944:66)
+    at commitHookEffectListMount (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:6901:153)
+    at commitHookPassiveMountEffects (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:6936:55)
+    at commitPassiveMountOnFiber (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:8313:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:8300:313)
+[2m10.31.32[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mAPI tidak tersedia, menggunakan data lokal: TypeError: Failed to fetch
+    at apiFetch (http://localhost:3000/src/services/api.ts:8:25)
+    at Object.getAll (http://localhost:3000/src/services/api.ts:37:16)
+    at fetchData (http://localhost:3000/src/App.tsx:187:15)
+    at http://localhost:3000/src/App.tsx:205:3
+    at Object.react_stack_bottom_frame (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:14178:13)
+    at runWithFiberInDEV (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:944:66)
+    at commitHookEffectListMount (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:6901:153)
+    at commitHookPassiveMountEffects (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:6936:55)
+    at reconnectPassiveEffects (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:8401:6)
+    at recursivelyTraverseReconnectPassiveEffects (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ae8bc68e:8388:5)
