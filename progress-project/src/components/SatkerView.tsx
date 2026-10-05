@@ -750,12 +750,12 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
               <div className="flex items-center gap-2 self-start sm:self-auto">
                 <button
                   type="button"
-                  onClick={() => { setShowRabForm(!showRabForm); setIsPembahasan2Collapsed(false); }}
+                  onClick={() => { setShowRabForm(true); setIsPembahasan2Collapsed(false); setIsUnifiedFormCollapsed(false); setTimeout(() => document.getElementById("unified-rab-form")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
                   className="h-8 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-                  title={showRabForm ? "Kembali ke Tabel" : "Ajukan Dokumen RAB Baru"}
+                  title="Ajukan Dokumen RAB Baru"
                 >
                   <Upload className="w-4 h-4" />
-                  <span>{showRabForm ? "Kembali ke Tabel" : "Pengajuan Baru"}</span>
+                  <span>Pengajuan Baru</span>
                 </button>
 
                 <button
@@ -1146,10 +1146,10 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
                 type="button"
                 onClick={() => setShowRabForm(false)}
                 className="h-8 px-3 rounded-lg text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 transition-colors cursor-pointer inline-flex items-center gap-1.5 text-xs font-semibold"
-                title="Tutup Formulir"
+                title="Kembali ke Tabel"
               >
-                <XCircle className="w-4 h-4" />
-                <span>Tutup</span>
+                <ArrowRight className="w-4 h-4 rotate-180" />
+                <span>Kembali ke Tabel</span>
               </button>
 
               <button
