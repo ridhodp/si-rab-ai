@@ -750,12 +750,12 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
               <div className="flex items-center gap-2 self-start sm:self-auto">
                 <button
                   type="button"
-                  onClick={() => { setShowRabForm(true); setIsPembahasan2Collapsed(false); setIsUnifiedFormCollapsed(false); setTimeout(() => document.getElementById("unified-rab-form")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
+                  onClick={() => { setShowRabForm(!showRabForm); setIsPembahasan2Collapsed(false); }}
                   className="h-8 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-                  title="Ajukan Dokumen RAB Baru"
+                  title={showRabForm ? "Kembali ke Tabel" : "Ajukan Dokumen RAB Baru"}
                 >
                   <Upload className="w-4 h-4" />
-                  <span>Pengajuan Baru</span>
+                  <span>{showRabForm ? "Kembali ke Tabel" : "Pengajuan Baru"}</span>
                 </button>
 
                 <button
