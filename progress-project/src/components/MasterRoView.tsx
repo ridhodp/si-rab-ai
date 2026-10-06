@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { HierarchyItem, AccessPermission, UserAccount } from "../types";
-import { Layers, Search, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, FolderGit2, Building2, ShieldCheck, Info, ChevronDown, ChevronUp, X, FileSpreadsheet } from "lucide-react";
+import { Layers, Search, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, FolderGit2, Building2, ShieldCheck, Info, ChevronDown, ChevronUp, X, FileSpreadsheet, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MasterRoViewProps {
   permission: AccessPermission; // "E" or "V"
@@ -39,6 +39,10 @@ export const MasterRoView: React.FC<MasterRoViewProps> = ({ permission, currentU
 
   // Delete Confirmation State
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Unique programs for filter dropdown
   const uniquePrograms = useMemo(() => {
@@ -87,6 +91,34 @@ export const MasterRoView: React.FC<MasterRoViewProps> = ({ permission, currentU
       return matchSearch && matchProgram && matchPriority;
     });
   }, [hierarchyData, searchTerm, selectedProgramFilter, selectedPriorityFilter]);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedList = filteredList.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedProgramFilter, selectedPriorityFilter]);
+
+  // Generate page numbers with ellipsis
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
   // Open Add Modal
   const handleOpenAddModal = () => {
@@ -344,9 +376,9 @@ export const MasterRoView: React.FC<MasterRoViewProps> = ({ permission, currentU
                       </td>
                     </tr>
                   ) : (
-                    filteredList.slice(0, 100).map((item, idx) => (
+                    paginatedList.map((item, idx) => (
                       <tr key={item.id || `${item.program}_${item.kro}_${item.ro}_${idx}`} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-                        <td className="px-4 py-3 text-center font-mono font-medium text-slate-400">{idx + 1}</td>
+                        <td className="px-4 py-3 text-center font-mono font-medium text-slate-400">{startIndex + idx + 1}</td>
                         <td className="px-4 py-3">
                           <div className="font-bold text-slate-800 dark:text-slate-200 leading-snug">{item.program}</div>
                           <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
@@ -404,8 +436,86 @@ export const MasterRoView: React.FC<MasterRoViewProps> = ({ permission, currentU
               </table>
             </div>
 
-            {filteredList.length > 100 && (
-              <div className="text-center py-2 text-xs text-slate-400">Menampilkan 100 dari {filteredList.length} total baris Master RO. Gunakan filter pencarian untuk mempersempit hasil.</div>
+            {/* Pagination */}
+            {filteredList.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="text-xs text-slate-500 dark:text-slate-400">
+                  Menampilkan <span className="font-bold text-slate-700 dark:text-slate-200">{startIndex + 1} - {Math.min(endIndex, filteredList.length)}</span> dari <span className="font-bold text-slate-700 dark:text-slate-200">{filteredList.length}</span> total baris Master RO
+                  {totalPages > 1 && <span className="text-slate-400 dark:text-slate-500"> (Halaman {currentPage} dari {totalPages})</span>}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-1.5">
+                    {/* First Page */}
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(1)}
+                      disabled={currentPage === 1}
+                      className="h-9 w-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                      title="Halaman Pertama"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      <ChevronLeft className="w-4 h-4 -ml-2.5" />
+                    </button>
+
+                    {/* Previous Page */}
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="h-9 px-3 rounded-lg flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>Sebelumnya</span>
+                    </button>
+
+                    {/* Page Numbers */}
+                    {getPageNumbers().map((page, idx) =>
+                      page === "..." ? (
+                        <span key={`ellipsis-${idx}`} className="h-9 w-9 flex items-center justify-center text-xs text-slate-400">
+                          ...
+                        </span>
+                      ) : (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page as number)}
+                          className={`h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold transition-colors cursor-pointer ${
+                            currentPage === page
+                              ? "bg-gradient-to-r from-cyan-600 to-cyan-500 text-white shadow-md shadow-cyan-600/30"
+                              : "text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    )}
+
+                    {/* Next Page */}
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="h-9 px-3 rounded-lg flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <span>Berikutnya</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Last Page */}
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(totalPages)}
+                      disabled={currentPage === totalPages}
+                      className="h-9 w-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                      title="Halaman Terakhir"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-4 h-4 -ml-2.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         )}

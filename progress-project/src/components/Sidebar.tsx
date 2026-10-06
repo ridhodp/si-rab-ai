@@ -141,7 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeRole, activeMenu, onSele
   const getOrderedMenuKeysForRole = (role: UserRole): StandardMenuKey[] => {
     switch (role) {
       case "superadmin":
-        return ["menu_users", "menu_acuan", "menu_checklist", "menu_master_ro", "menu_rab_list", "menu_verification"];
+        return ["menu_users", "menu_acuan", "menu_checklist", "menu_master_ro", "menu_rab_list"];
       case "verifikator":
         return ["menu_acuan", "menu_checklist", "menu_master_ro", "menu_verification"];
       case "satker":
