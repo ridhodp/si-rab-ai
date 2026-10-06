@@ -733,17 +733,20 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
           </div>
 
           {/* SECTION 2: PEMBAHASAN 2 • TABEL INFORMASI DOKUMEN PDF & FORM FILTER PENCARIAN DOKUMEN */}
-          <div className="relative bg-white dark:bg-slate-900 border-2 border-blue-500 dark:border-blue-500 rounded-2xl p-6 sm:p-8 pt-8 sm:pt-9 shadow-sm space-y-6 sm:space-y-7 transition-all">
+          <div className="relative bg-white dark:bg-slate-900 border-2 border-cyan-500 dark:border-cyan-500 rounded-2xl p-6 sm:p-8 pt-8 sm:pt-9 shadow-sm space-y-6 sm:space-y-7 transition-all">
             {/* Outline Label Badge */}
-            <div className="absolute -top-3.5 left-5 sm:left-6 z-10 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-sm border bg-blue-600 text-white border-blue-400 select-none">
+            <div className="absolute -top-3.5 left-5 sm:left-6 z-10 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-sm border bg-cyan-600 text-white border-cyan-400 select-none">
               <FileText className="w-3.5 h-3.5" />
-              <span>PEMBAHASAN 2 &bull; TABEL INFORMASI DOKUMEN PDF RAB</span>
+              <span>
+                PEMBAHASAN 2 &bull;{" "}
+                {showRabForm ? "FORMULIR PENGAJUAN DOKUMEN RAB BARU" : "TABEL INFORMASI DOKUMEN PDF RAB"}
+              </span>
             </div>
 
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <FileText className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                   <span>2. Tabel Informasi Dokumen PDF Berdasarkan Status &amp; Aksi CRUD</span>
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -752,15 +755,17 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
               </div>
 
               <div className="flex items-center gap-2 self-start sm:self-auto">
-                <button
-                  type="button"
-                  onClick={() => { setShowRabForm(true); setIsPembahasan2Collapsed(false); setIsUnifiedFormCollapsed(false); setTimeout(() => document.getElementById("unified-rab-form")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
-                  className="h-8 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-                  title="Ajukan Dokumen RAB Baru"
-                >
-                  <Upload className="w-4 h-4" />
-                  <span>Pengajuan Baru</span>
-                </button>
+                {!showRabForm && (
+                  <button
+                    type="button"
+                    onClick={() => { setShowRabForm(true); setIsPembahasan2Collapsed(false); setIsUnifiedFormCollapsed(false); setTimeout(() => document.getElementById("unified-rab-form")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
+                    className="h-8 px-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                    title="Ajukan Dokumen RAB Baru"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Pengajuan Baru</span>
+                  </button>
+                )}
 
                 <button
                 type="button"
@@ -1134,6 +1139,17 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
               <span>PEMBAHASAN TERPADU &bull; FORMULIR PENGAJUAN TELAAH DOKUMEN RAB BARU</span>
             </div>
 
+            {/* X Tutup Formulir -> kembali ke tabel (pojok kanan atas kartu) */}
+            <button
+              type="button"
+              onClick={() => setShowRabForm(false)}
+              className="absolute -top-4 -right-4 z-20 h-8 w-8 inline-flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/60 shadow-sm transition-colors cursor-pointer"
+              title="Tutup formulir & kembali ke tabel"
+              aria-label="Tutup formulir dan kembali ke tabel"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between">
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
@@ -1146,16 +1162,6 @@ export const SatkerView: React.FC<SatkerViewProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowRabForm(false)}
-                className="h-8 px-3 rounded-lg text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 transition-colors cursor-pointer inline-flex items-center gap-1.5 text-xs font-semibold"
-                title="Kembali ke Tabel"
-              >
-                <ArrowRight className="w-4 h-4 rotate-180" />
-                <span>Kembali ke Tabel</span>
-              </button>
-
               <button
                 type="button"
                 onClick={() => setIsUnifiedFormCollapsed(!isUnifiedFormCollapsed)}
